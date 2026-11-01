@@ -29,7 +29,6 @@ def champ_estimation(a: dict) -> dict:
 
 def payload_alerte(a: dict) -> dict:
     embeds = [e.to_dict() for e in construire_embeds(a)]
-    embeds[0].setdefault("fields", []).insert(0, champ_estimation(a))
     boutons = [{"type": 2, "style": 5, "label": "Commander sur ZenMarket", "emoji": {"name": "🛒"},
                 "url": a["url_zenmarket"]}]
     if a.get("url_original"):

@@ -278,3 +278,10 @@ def test_compteur_panne_persiste(tmp_path):
         bot = Bot(cfg, cap, db)
         bot._surveiller_panne("mercari", 0)
     assert any("aucun résultat" in m for m in cap.messages)
+
+
+def test_triomphe_cuir_rejette_pochette_macadam():
+    triomphe = art("Céline Triomphe cuir", unique=False)
+    titre = "オールド CELINE セリーヌ トリオンフ マカダム柄 ハンドバッグ ホーボー PVCレザー ブラウン ヴィンテージ ポーチ 6681"
+    assert not correspond(triomphe, L(titre, price=36081), CFG["exclusions_globales"])
+    assert correspond(triomphe, L("セリーヌ トリオンフ レザー ショルダーバッグ", price=90000), CFG["exclusions_globales"])

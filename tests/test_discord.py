@@ -76,10 +76,14 @@ def test_alerte_discord_contient_tout(tmp_path):
     embeds = construire_embeds(a)
     assert len(embeds) == 3                                     # galerie 3 photos
     assert all(e.url == a["url_zenmarket"] for e in embeds)    # même url = galerie Discord
-    texte = embeds[0].description
-    assert "25 000 ¥" in texte and "942 avis · 100 % positifs" in texte
-    assert "Prix total livré en France" in texte
-    assert embeds[0].fields[0].name.startswith("✅ Contrôle anti-contrefaçon passé")
+    e = embeds[0]
+    assert e.title == "LV Speedy"                               # modèle en français, pas le titre japonais
+    assert "livré en France" in e.description and "Ton prix max : **450 €**" in e.description
+    champs = {f.name: f.value for f in e.fields}
+    assert champs["Prix au Japon"].startswith("25 000 ¥")
+    assert champs["👤 Vendeur"] == "942 avis · 100 % positifs"
+    assert not any("vérifier" in n for n in champs)            # rien de suspect -> pas d'avertissement
+    assert "スピーディ" in e.footer.text                         # titre japonais en petit
 
 
 def test_boutons_de_l_alerte(tmp_path):
@@ -186,7 +190,7 @@ def test_webhook_payload(tmp_path, monkeypatch):
     params, payload = envois[0]
     assert params["with_components"] == "true"
     assert len(payload["embeds"]) == 3
-    assert payload["embeds"][0]["fields"][0]["name"] == "🧮 Estimation prix total"
+    assert "Détail : article" in payload["embeds"][0]["description"]
     boutons = payload["components"][0]["components"]
     assert [b["label"] for b in boutons] == ["Commander sur ZenMarket", "Annonce d'origine"]
     assert all(b["style"] == 5 and b["url"].startswith("https://") for b in boutons)
@@ -206,3 +210,14 @@ def test_webhook_attend_si_limite(monkeypatch):
     monkeypatch.setattr(discord_webhook.requests, "post", lambda *a, **k: R(*next(reponses)))
     monkeypatch.setattr(discord_webhook.time, "sleep", lambda s: None)
     assert discord_webhook.DiscordWebhook("https://x").envoyer("<b>Récap</b>") is True
+
+
+def test_alerte_enchere_affiche_mise_max(tmp_path):
+    from bot.discord_bot import construire_embeds
+    bot, notif, _ = _bot(tmp_path, [], DETAILS)
+    l = speedy()
+    l.source, l.is_auction, l.time_left = "yahoo", True, "2 jours"
+    bot.sources = [FausseSource([l])]
+    bot.cycle()
+    champs = {f.name: f.value for f in construire_embeds(notif.alertes[0])[0].fields}
+    assert "Ne mise pas plus de" in champs["⏳ Enchère : le prix peut encore monter"]

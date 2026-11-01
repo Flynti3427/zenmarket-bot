@@ -14,11 +14,10 @@ import discord
 from discord import app_commands
 from discord.ext import tasks
 
-from .alerte import ecart_prix_habituel
 
 log = logging.getLogger(__name__)
 
-VERT, BLEU, ROUGE, GRIS = 0x2ECC71, 0x5865F2, 0xE74C3C, 0x95A5A6
+VERT, BLEU, ROUGE, ORANGE = 0x2ECC71, 0x5865F2, 0xE74C3C, 0xE67E22
 
 
 def eur(x) -> str:
@@ -41,55 +40,57 @@ def signe(x) -> str:
 
 # ------------------------------------------------------------------ affichage
 def construire_embeds(a: dict) -> list[discord.Embed]:
-    """L'alerte principale + jusqu'à 2 embeds de photos (Discord les affiche en galerie)."""
-    statut = "🔥 SOUS ta fourchette" if a["sous_fourchette"] else "✅ dans ta fourchette"
-    entete = ("📉 Baisse de prix · " if a["baisse"] else "") + f"{a['article']} · {statut}"
-    couleur = ROUGE if a["signaux"] else (VERT if a["sous_fourchette"] else BLEU)
+    """Alerte courte et lisible : le modèle en français, le coût total en gros, 3 infos clés, les photos."""
+    c = a["cout"]
+    vise = a["achat_vise"]
+    if a["baisse"]:
+        badge = "📉 BAISSE DE PRIX"
+    elif a["sous_fourchette"]:
+        badge = "🔥 TRÈS BONNE AFFAIRE"
+    else:
+        badge = "✅ BONNE AFFAIRE"
+    couleur = ORANGE if a["signaux"] else (VERT if a["sous_fourchette"] else BLEU)
 
-    dispo = "🟢 Enchère en cours" if a["enchere"] else "🟢 Disponible au Japon"
-    lignes = [
-        f"Prix de l'article au Japon · {dispo} · {a['source_nom']}",
-        f"# {eur(a['prix_eur'])}  `{jpy(a['prix_jpy'])}`",
-    ]
-    ecart = ecart_prix_habituel(a)
-    if ecart is not None:
-        if ecart > 0:
-            lignes.append(f"🔴 +{ecart} % au-dessus du prix habituel (≈ {eur(a['prix_habituel_eur'])})")
-        else:
-            lignes.append(f"🟢 {ecart} % sous le prix habituel (≈ {eur(a['prix_habituel_eur'])})")
-    if a.get("taux_eur_jpy"):
-        lignes.append(f"-# Vrai prix demandé par le vendeur, au taux du jour (1 € = {a['taux_eur_jpy']} ¥), sans les frais.")
-    if a["enchere"]:
-        lignes.append("⏳ Enchère : prix actuel, il peut monter"
-                      + (f" · reste {a['temps_restant']}" if a.get("temps_restant") else ""))
-        if a.get("achat_immediat_jpy"):
-            lignes.append(f"⚡ Achat immédiat : {jpy(a['achat_immediat_jpy'])}")
-    icone_etat = {"tres_bon": "🟢", "moyen": "🟠", "mauvais": "🔴"}[a["etat"]]
-    lignes.append(f"{icone_etat} **État : {a['etat_libelle']}** ({a['etat_raison']})")
-    if a.get("vendeur_avis"):
-        lignes.append(f"👤 Vendeur : {a['vendeur_avis']} avis · {a['vendeur_positif_pct']} % positifs")
-    lignes.append("")
-    lignes.append(f"📦 **Prix total livré en France : {eur(a['cout']['total'])}** "
-                  f"(ton prix d'achat : {fourchette(a['achat_vise'])})")
+    lignes = [f"## 📦 {eur(c['total'])} livré en France",
+              f"Ton prix max : **{eur(vise[1]) if vise else '?'}**"
+              + (f" → tu économises **{eur(vise[1] - c['total'])}**" if vise else "")]
     if a.get("revente") and a.get("marge"):
         bas, haut = a["marge"]
         marge = signe(bas) if bas == haut else f"{signe(bas)} à {signe(haut)}"
-        lignes.append(f"💶 Revente {fourchette(a['revente'])} → marge estimée **{marge}**")
-    if a["source"] == "mercari_shops":
-        lignes.append("ℹ️ Article Mercari Shops : colle le lien d'origine dans ZenMarket (« Ajouter une URL »).")
+        lignes.append(f"💶 Revente {fourchette(a['revente'])} → marge **{marge}**")
+    lignes.append(f"-# Détail : article {eur(c['article'])} + ZenMarket {eur(c['zenmarket'])} + port {eur(c['port'])}"
+                  f" + douane {eur(c['douane'])} + TVA {eur(c['tva'])} + frais {eur(c['fixes'])}")
 
-    e = discord.Embed(title=a["titre"][:250], url=a["url_zenmarket"], description="\n".join(lignes),
+    e = discord.Embed(title=f"{a['article']}", url=a["url_zenmarket"], description="\n".join(lignes),
                       color=couleur, timestamp=datetime.fromtimestamp(a["horodatage"], timezone.utc))
-    e.set_author(name=entete[:250])
+    e.set_author(name=badge)
+
+    icone_etat = {"tres_bon": "🟢", "moyen": "🟠", "mauvais": "🔴"}[a["etat"]]
+    e.add_field(name="Prix au Japon", value=f"{jpy(a['prix_jpy'])}\n≈ {eur(a['prix_eur'])}", inline=True)
+    e.add_field(name="État", value=f"{icone_etat} {a['etat_libelle'].capitalize()}", inline=True)
+    source = a["source_nom"] + ("\n⏳ enchère" if a["enchere"] else "\n🛒 achat direct")
+    e.add_field(name="Site", value=source, inline=True)
+
+    if a["enchere"]:
+        infos = []
+        if a.get("temps_restant"):
+            infos.append(f"Fin dans {a['temps_restant']}")
+        if a.get("achat_immediat_jpy"):
+            infos.append(f"Achat immédiat possible : {jpy(a['achat_immediat_jpy'])}")
+        if a.get("prix_max_jpy"):
+            infos.append(f"**Ne mise pas plus de {jpy(a['prix_max_jpy'])}**")
+        e.add_field(name="⏳ Enchère : le prix peut encore monter", value="\n".join(infos) or "—", inline=False)
+    if a.get("vendeur_avis"):
+        e.add_field(name="👤 Vendeur", value=f"{a['vendeur_avis']} avis · {a['vendeur_positif_pct']} % positifs",
+                    inline=False)
     if a["signaux"]:
-        e.add_field(name="⚠️ Contrôle anti-contrefaçon : à vérifier",
-                    value="\n".join(f"• {s}" for s in a["signaux"])[:1000]
-                    + "\nRegarde bien les photos avant d'acheter.", inline=False)
-    else:
-        e.add_field(name="✅ Contrôle anti-contrefaçon passé",
-                    value="• Rien de suspect dans le titre, le prix et le vendeur\n"
-                          "Indicatif : vérifie toujours les photos avant d'acheter.", inline=False)
-    e.set_footer(text=f"✓ Tu commandes sur ZenMarket, qui achète au Japon et t'expédie le colis · 🔍 {a['source_nom']}")
+        e.add_field(name="⚠️ À vérifier avant d'acheter",
+                    value="\n".join(f"• {s}" for s in a["signaux"])[:1000], inline=False)
+    if a["source"] == "mercari_shops":
+        e.add_field(name="ℹ️ Mercari Shops",
+                    value="Colle le lien « Annonce d'origine » dans ZenMarket (« Ajouter une URL »).", inline=False)
+
+    e.set_footer(text=f"🇯🇵 {a['titre'][:150]}")
     photos = a.get("photos") or []
     if photos:
         e.set_image(url=photos[0])
