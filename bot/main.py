@@ -283,8 +283,14 @@ def main():
         lancer_discord(config, Stockage(args.db), discord_token, salon)
         return
     webhook = os.environ.get("DISCORD_WEBHOOK_URL")
+    webhooks = os.environ.get("DISCORD_WEBHOOKS")  # JSON {salon: url}, un webhook par salon
     if args.dry_run:
         notifier = ConsoleNotifier()
+    elif webhooks:
+        import json
+
+        from .discord_webhook import DiscordWebhooks
+        notifier = DiscordWebhooks(json.loads(webhooks), economie)
     elif webhook:
         from .discord_webhook import DiscordWebhook
         notifier = DiscordWebhook(webhook, economie)

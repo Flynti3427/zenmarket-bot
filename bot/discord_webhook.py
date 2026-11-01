@@ -11,7 +11,7 @@ import time
 import requests
 
 from .discord_bot import construire_embeds, convertir_html, eur, fourchette, jpy
-from .discord_v2 import est_meilleure_affaire, payload_v2
+from .discord_v2 import est_meilleure_affaire, marque_de, payload_v2
 
 log = logging.getLogger(__name__)
 
@@ -46,6 +46,7 @@ class DiscordWebhook:
 
     def _poster(self, payload: dict) -> bool:
         for _ in range(3):
+            payload = {"username": "ZenMarket Alertes", **payload}
             try:
                 r = requests.post(self.url, params={"with_components": "true", "wait": "true"},
                                   json=payload, timeout=20)
@@ -68,3 +69,30 @@ class DiscordWebhook:
 
     def envoyer(self, texte: str, photo: str | None = None) -> bool:
         return self._poster({"content": convertir_html(texte)[:2000], "allowed_mentions": {"parse": []}})
+
+
+class DiscordWebhooks:
+    """Un webhook par salon : {"louis-vuitton": url, ..., "meilleures-affaires": url}.
+
+    Chaque alerte va dans le salon de sa marque ; les meilleures affaires sont aussi copiées
+    dans « meilleures-affaires », qui reçoit aussi le démarrage, le récap et les pannes.
+    """
+
+    def __init__(self, salons: dict[str, str], economie_min_pct: float = 25):
+        self.salons = {k: DiscordWebhook(v, economie_min_pct) for k, v in salons.items() if v}
+        self.economie_min_pct = economie_min_pct
+        self.secours = self.salons.get("meilleures-affaires") or next(iter(self.salons.values()))
+
+    def _webhook(self, salon: str) -> DiscordWebhook:
+        return self.salons.get(salon) or self.secours
+
+    def envoyer_alerte(self, a: dict) -> bool:
+        meilleure = est_meilleure_affaire(a, self.economie_min_pct)
+        payload = payload_v2(a, meilleure)
+        ok = self._webhook(marque_de(a["article"])[1])._poster(payload)
+        if meilleure and "meilleures-affaires" in self.salons:
+            self.salons["meilleures-affaires"]._poster(payload)
+        return ok
+
+    def envoyer(self, texte: str, photo: str | None = None) -> bool:
+        return self.secours.envoyer(texte)

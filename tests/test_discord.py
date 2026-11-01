@@ -311,3 +311,28 @@ def test_salons_crees_et_routage(tmp_path, monkeypatch):
     assert d.envoyer_alerte(a)
     cibles = [cid for cid, _ in api.messages]
     assert cibles == [d.salons[nom_salon("louis-vuitton")], d.salons[SALON_MEILLEURES]]
+
+
+def test_un_webhook_par_salon(tmp_path, monkeypatch):
+    from bot import discord_webhook
+    envois = []
+
+    class R:
+        status_code, ok, text = 200, True, ""
+
+    monkeypatch.setattr(discord_webhook.requests, "post",
+                        lambda url, params, json, timeout: envois.append((url, json)) or R())
+    monkeypatch.setattr(discord_webhook.time, "sleep", lambda s: None)
+    salons = {s: f"https://discord.com/api/webhooks/{s}" for s in
+              ["meilleures-affaires", "louis-vuitton", "chanel", "dior", "gucci", "prada", "saint-laurent",
+               "fendi", "bottega-veneta", "celine", "chloe", "coach", "jacquemus", "burberry"]}
+    bot, _, _ = _bot(tmp_path, [speedy()], DETAILS)
+    bot.notifier = discord_webhook.DiscordWebhooks(salons, 25)
+    assert bot.cycle() == 1
+    urls = [u for u, _ in envois]
+    assert urls == [salons["louis-vuitton"], salons["meilleures-affaires"]]  # Speedy très sous 450 €
+    assert envois[0][1]["username"] == "ZenMarket Alertes"
+
+    envois.clear()
+    bot.notifier.envoyer("Récap")
+    assert envois[0][0] == salons["meilleures-affaires"]
