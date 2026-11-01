@@ -22,6 +22,7 @@ reglages:
   pause_entre_requetes_s: [1, 3]  # pause aléatoire entre deux requêtes (anti-blocage)
   alerte_si_baisse_prix_pct: 10   # re-alerte si un article déjà signalé baisse de 10 %
   seuil_unique_tous_etats: true   # un seul seuil par article, quel que soit l'état
+  meilleure_affaire_economie_pct: 25  # salon « meilleures-affaires » : coût livré au moins 25 % sous ton prix max
   max_alertes_par_cycle: 15       # évite de spammer au premier démarrage
   recap_quotidien_heure: 9        # heure (Europe/Paris) du récap Telegram
   sources: [mercari, yahoo]       # Mercari Japon + Yahoo Enchères (JDirectItems)

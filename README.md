@@ -35,31 +35,42 @@ Pochette Accessoires, Coach vintage…).
 
 ---
 
-## Étape 1 — Créer le webhook Discord (1 min)
+## Étape 1 — Créer le bot Discord (10 min)
 
-Dans l'appli Discord, sur ton serveur : appui long sur le salon des alertes → **Modifier le salon**
-→ **Intégrations** → **Webhooks** → **Nouveau webhook** → nom `Zen Alertes` → **Copier l'URL du webhook**.
-Cette URL est secrète : quiconque l'a peut écrire dans ton salon.
+Sur téléphone : Chrome en **« Version pour ordinateur »** (menu ⋮).
 
-Chaque alerte arrive avec 3 photos, le prix en € et en ¥, l'écart avec le prix habituel, l'état,
-les avis du vendeur, le détail du prix total livré en France, la marge, un contrôle anti-contrefaçon
-et les boutons **🛒 Commander sur ZenMarket** et **🔎 Annonce d'origine**.
+1. **discord.com/developers/applications** → **New Application** → nom `Zen Alertes` → **Create**.
+2. Onglet **Bot** → **Reset Token** → **Copy** : c'est le **token du bot** (secret).
+3. Onglet **OAuth2** → **URL Generator** :
+   - Scopes : **bot**
+   - Bot permissions : **Manage Channels**, **View Channels**, **Send Messages**, **Embed Links**
+   - Ouvre l'URL générée en bas → choisis ton serveur → **Autoriser**.
+4. Appli Discord : **Paramètres → Avancés → Mode développeur** activé, puis appui long sur
+   l'icône de ton serveur → **Copier l'identifiant du serveur**.
+
+Au premier tour, le bot crée tout seul la catégorie **ZenMarket** avec :
+- **🔥┃meilleures-affaires** : coût livré au moins 25 % sous ton prix max, sans signal suspect
+  (réglage `meilleure_affaire_economie_pct` dans `config.yaml`) ; il reçoit aussi le message de démarrage et le récap du matin ;
+- un salon par marque : **👜┃louis-vuitton**, **👜┃chanel**, **👜┃dior**, **👜┃gucci**, **👜┃prada**,
+  **👜┃saint-laurent**, **👜┃fendi**, **👜┃bottega-veneta**, **👜┃celine**, **👜┃chloe**, **👜┃coach**,
+  **👜┃jacquemus**, **👜┃burberry**.
+
+Il ne modifie ni ne supprime jamais tes autres salons. Chaque alerte est au format « bloc » :
+3 photos en haut, prix en € et en ¥, écart avec le prix habituel, état, avis du vendeur,
+total livré en France et détail des frais, marge, boutons **🛒 Commander sur ZenMarket** et
+**🔎 Annonce d'origine**, contrôle anti-contrefaçon et « il y a X minutes ».
 
 ## Étape 2 — Le faire tourner 24h/24 avec GitHub Actions (gratuit)
 
-Le bot tourne sur les serveurs de GitHub (aux États-Unis : Yahoo et Mercari accessibles),
-un tour toutes les ~15 minutes, gratuit dans un dépôt **public**. L'URL du webhook reste secrète.
+1. Dans le dépôt : **Settings → Secrets and variables → Actions → New repository secret**, crée :
+   - `DISCORD_BOT_TOKEN` = le token du bot
+   - `DISCORD_GUILD_ID` = l'identifiant du serveur
+2. Onglet **Actions** → **Bot ZenMarket** → **Run workflow**.
+3. La catégorie ZenMarket et ses salons apparaissent, puis les alertes. Ensuite le bot tourne tout seul
+   toutes les ~15 minutes (GitHub peut décaler un tour de quelques minutes).
 
-1. Le code est dans le dépôt GitHub `zenmarket-bot`.
-2. Dans le dépôt : **Settings → Secrets and variables → Actions → New repository secret** :
-   Name `DISCORD_WEBHOOK_URL`, Secret = l'URL copiée à l'étape 1.
-3. Onglet **Actions** → **Bot ZenMarket** → **Run workflow** pour lancer un premier tour tout de suite.
-4. « 🤖 Bot ZenMarket démarré » arrive dans ton salon. Ensuite le bot tourne tout seul.
-
-Bon à savoir :
-- GitHub peut décaler un tour de quelques minutes aux heures chargées.
-- La mémoire du bot (annonces déjà signalées) est gardée dans le cache GitHub.
-- Le bot fait un petit commit tous les 40 jours pour que GitHub ne le mette pas en pause.
+Sans bot, un simple webhook marche aussi (secret `DISCORD_WEBHOOK_URL`) : même présentation,
+mais tout arrive dans un seul salon.
 
 ### Option avancée : boutons Estimation / Favoris / Arnaque
 

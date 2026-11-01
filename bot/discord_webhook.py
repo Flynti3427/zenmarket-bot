@@ -11,6 +11,7 @@ import time
 import requests
 
 from .discord_bot import construire_embeds, convertir_html, eur, fourchette, jpy
+from .discord_v2 import est_meilleure_affaire, payload_v2
 
 log = logging.getLogger(__name__)
 
@@ -39,8 +40,9 @@ def payload_alerte(a: dict) -> dict:
 
 
 class DiscordWebhook:
-    def __init__(self, url: str):
+    def __init__(self, url: str, economie_min_pct: float = 25):
         self.url = url.strip()
+        self.economie_min_pct = economie_min_pct
 
     def _poster(self, payload: dict) -> bool:
         for _ in range(3):
@@ -62,7 +64,7 @@ class DiscordWebhook:
         return False
 
     def envoyer_alerte(self, a: dict) -> bool:
-        return self._poster(payload_alerte(a))
+        return self._poster(payload_v2(a, est_meilleure_affaire(a, self.economie_min_pct)))
 
     def envoyer(self, texte: str, photo: str | None = None) -> bool:
         return self._poster({"content": convertir_html(texte)[:2000], "allowed_mentions": {"parse": []}})

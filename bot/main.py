@@ -267,17 +267,27 @@ def main():
     charger_env()
     Path(args.db).parent.mkdir(parents=True, exist_ok=True)
     discord_token, salon = os.environ.get("DISCORD_BOT_TOKEN"), os.environ.get("DISCORD_CHANNEL_ID")
+    serveur = os.environ.get("DISCORD_GUILD_ID")
+    config = charger_config(args.config)
+    economie = config["reglages"].get("meilleure_affaire_economie_pct", 25)
+    if discord_token and serveur and not args.dry_run:
+        # GitHub Actions : le bot crée les salons et poste par marque (API REST, un tour puis arrêt)
+        from .discord_serveur import DiscordServeur
+        notif = DiscordServeur(discord_token, serveur, [a["nom"] for a in config["articles"]], economie)
+        notif.preparer()
+        Bot(config, notif, Stockage(args.db)).tourner(une_fois=args.once)
+        return
     if discord_token and not args.dry_run:
         if not salon:
             raise SystemExit("DISCORD_CHANNEL_ID doit être défini (ID du salon où envoyer les alertes)")
-        lancer_discord(charger_config(args.config), Stockage(args.db), discord_token, salon)
+        lancer_discord(config, Stockage(args.db), discord_token, salon)
         return
     webhook = os.environ.get("DISCORD_WEBHOOK_URL")
     if args.dry_run:
         notifier = ConsoleNotifier()
     elif webhook:
         from .discord_webhook import DiscordWebhook
-        notifier = DiscordWebhook(webhook)
+        notifier = DiscordWebhook(webhook, economie)
     else:
         token, chat = os.environ.get("TELEGRAM_BOT_TOKEN"), os.environ.get("TELEGRAM_CHAT_ID")
         if not token or not chat:
@@ -285,7 +295,7 @@ def main():
                              "ou TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID")
         notifier = Telegram(token, chat)
 
-    Bot(charger_config(args.config), notifier, Stockage(args.db)).tourner(une_fois=args.once)
+    Bot(config, notifier, Stockage(args.db)).tourner(une_fois=args.once)
 
 
 if __name__ == "__main__":

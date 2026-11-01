@@ -189,11 +189,7 @@ def test_webhook_payload(tmp_path, monkeypatch):
     assert bot.cycle() == 1
     params, payload = envois[0]
     assert params["with_components"] == "true"
-    assert len(payload["embeds"]) == 3
-    assert "Détail : article" in payload["embeds"][0]["description"]
-    boutons = payload["components"][0]["components"]
-    assert [b["label"] for b in boutons] == ["Commander sur ZenMarket", "Annonce d'origine"]
-    assert all(b["style"] == 5 and b["url"].startswith("https://") for b in boutons)
+    assert payload["flags"] == 1 << 15 and payload["components"][0]["type"] == 17
 
 
 def test_webhook_attend_si_limite(monkeypatch):
@@ -221,3 +217,97 @@ def test_alerte_enchere_affiche_mise_max(tmp_path):
     bot.cycle()
     champs = {f.name: f.value for f in construire_embeds(notif.alertes[0])[0].fields}
     assert "Ne mise pas plus de" in champs["⏳ Enchère : le prix peut encore monter"]
+
+
+# ------------------------------------------------- format de la capture (V2)
+def _alerte(tmp_path, details=DETAILS, annonces=None):
+    bot, notif, _ = _bot(tmp_path, annonces or [speedy()], details)
+    bot.cycle()
+    return notif.alertes[0]
+
+
+def _textes(bloc):
+    return "\n".join(c["content"] for c in bloc["components"] if c["type"] == 10)
+
+
+def test_format_comme_la_capture(tmp_path):
+    from bot.discord_v2 import payload_v2
+    p = payload_v2(_alerte(tmp_path), meilleure=True)
+    bloc = p["components"][0]
+    types = [c["type"] for c in bloc["components"]]
+    # en-tête, galerie de photos, séparateur, prix, boutons, séparateur, contrôle, pied
+    assert types == [10, 12, 14, 10, 1, 14, 10, 10]
+    assert len(bloc["components"][1]["items"]) == 3
+    texte = _textes(bloc)
+    assert "🔥 **LV Speedy** · meilleure affaire" in texte
+    assert "Prix de l'article au Japon · 🟢 Disponible au Japon · Mercari" in texte
+    assert "`25 000 ¥`" in texte and "942 avis · 100 % positifs" in texte
+    assert "Total livré en France" in texte and "Contrôle anti-contrefaçon passé" in texte
+    assert "<t:" in texte  # « il y a X minutes »
+    boutons = bloc["components"][4]["components"]
+    assert boutons[0]["label"] == "Commander sur ZenMarket" and boutons[0]["style"] == 5
+    assert len(texte) < 4000
+
+
+def test_marques_de_tous_les_articles():
+    from bot.discord_v2 import marque_de
+    cfg = yaml.safe_load(open("config.yaml", encoding="utf-8"))
+    marques = {a["nom"]: marque_de(a["nom"]) for a in cfg["articles"]}
+    assert all(m[0] != "Autres" for m in marques.values()), marques
+    assert marques["Lady Dior classique"] == ("Dior", "dior")
+    assert marques["Sac Céline (autre modèle)"] == ("Céline", "celine")
+    assert len({m[1] for m in marques.values()}) == 13
+
+
+def test_meilleure_affaire():
+    from bot.discord_v2 import est_meilleure_affaire
+    a = {"achat_vise": [400, 450], "cout": {"total": 300}, "signaux": []}
+    assert est_meilleure_affaire(a, 25)           # 33 % sous le max
+    a["cout"]["total"] = 400
+    assert not est_meilleure_affaire(a, 25)       # 11 % seulement
+    a["cout"]["total"], a["signaux"] = 300, ["prix anormalement bas"]
+    assert not est_meilleure_affaire(a, 25)       # suspect -> jamais « meilleure »
+
+
+class FausseApiDiscord:
+    def __init__(self, existants):
+        self.salons = list(existants)
+        self.messages = []
+        self.prochain = 1000
+
+    def request(self, methode, url, timeout=None, json=None):
+        import types
+        chemin = url.split("/api/v10")[1]
+        if methode == "GET":
+            data = self.salons
+        elif chemin.endswith("/channels"):
+            self.prochain += 1
+            data = {"id": str(self.prochain), **json}
+            self.salons.append(data)
+        else:
+            self.messages.append((chemin.split("/")[2], json))
+            data = {"id": "m"}
+        return types.SimpleNamespace(status_code=200, ok=True, content=b"x", json=lambda: data, text="")
+
+
+def test_salons_crees_et_routage(tmp_path, monkeypatch):
+    from bot import discord_serveur
+    from bot.discord_serveur import DiscordServeur, SALON_MEILLEURES, nom_salon
+    monkeypatch.setattr(discord_serveur.time, "sleep", lambda s: None)
+    cfg = yaml.safe_load(open("config.yaml", encoding="utf-8"))
+    api = FausseApiDiscord([{"id": "1", "type": 0, "name": "général"},
+                            {"id": "2", "type": 0, "name": nom_salon("chanel")}])  # existe déjà
+    d = DiscordServeur("tok", "999", [a["nom"] for a in cfg["articles"]], 25)
+    d.session = api
+    d.preparer()
+    noms = [s["name"] for s in api.salons]
+    assert "ZenMarket" in noms and SALON_MEILLEURES in noms and nom_salon("louis-vuitton") in noms
+    assert noms.count(nom_salon("chanel")) == 1            # pas de doublon
+    assert len(d.salons) == 14                              # 13 marques + meilleures affaires
+    d.preparer()                                            # 2e tour : rien de recréé
+    assert len(api.salons) == len(noms)
+
+    a = _alerte(tmp_path)                                   # Speedy 25 000 ¥ : très sous 450 €
+    assert d.envoyer_alerte(a)
+    cibles = [cid for cid, _ in api.messages]
+    assert cibles == [d.salons[nom_salon("louis-vuitton")], d.salons[SALON_MEILLEURES]]
