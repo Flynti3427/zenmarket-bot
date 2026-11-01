@@ -88,7 +88,9 @@ def payload_v2(a: dict, meilleure: bool = False) -> dict:
     lignes.append("")
     total = f"📦 **Total livré en France : {eur(c['total'])}**"
     if vise:
-        total += f" · ton max {eur(vise[1])} → **{signe(c['total'] - vise[1])}**"
+        ecart = vise[1] - c["total"]
+        total += (f" · **{eur(ecart)} sous ton max** ({eur(vise[1])})" if ecart >= 0
+                  else f" · {eur(-ecart)} au-dessus de ton max ({eur(vise[1])})")
     lignes.append(total)
     lignes.append(f"-# Article {eur(c['article'])} + ZenMarket {eur(c['zenmarket'])} + port {eur(c['port'])}"
                   f" + douane {eur(c['douane'])} + TVA {eur(c['tva'])} + frais {eur(c['fixes'])}")
