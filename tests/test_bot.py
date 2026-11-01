@@ -119,7 +119,7 @@ def test_prix_unique_vaut_pour_tres_bon():
 
 def test_tous_les_articles_du_tableau_presents():
     noms = {a["nom"] for a in CFG["articles"]}
-    assert len(CFG["articles"]) == 45
+    assert len(CFG["articles"]) == 55  # 45 du tableau + 10 wallets
     for n in ["LV Saint-Germain", "LV Alma", "LV Ellipse", "Chanel Wallet on Chain (WOC)",
               "Lady Dior classique", "Bottega Veneta Jodie mini", "Chloé Nile Bracelet Bag"]:
         assert n in noms

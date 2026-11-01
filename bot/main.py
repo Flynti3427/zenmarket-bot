@@ -98,7 +98,7 @@ class Bot:
 
     def cycle(self) -> int:
         taux = self.fx.jpy_eur()
-        candidats = []
+        candidats, libres, a_initialiser = [], [], set()
         for source in self.sources:
             total_source = 0
             for article in self.articles:
@@ -121,6 +121,16 @@ class Bot:
                         prix_alerte = deja[1] if deja else None
                         baisse_min = 1 - self.r["alerte_si_baisse_prix_pct"] / 100
                         nouveau = prix_alerte is None or l.price_jpy <= prix_alerte * baisse_min
+                        if article.sans_limite:
+                            if self.db.meta_get(f"init:{article.nom}") is None:
+                                # 1er passage : on mémorise les annonces déjà en ligne sans alerter,
+                                # pour ne recevoir ensuite que les nouvelles
+                                self.db.enregistrer(l.key, article.nom, l.title, l.price_jpy,
+                                                    est.cout_total_eur, None, l.url_zenmarket, True)
+                                a_initialiser.add(article.nom)
+                            elif nouveau:
+                                libres.append((0, article, l, etat, raison, est, prix_alerte is not None))
+                            continue
                         if est.dans_les_prix and nouveau:
                             # tri : la plus grosse économie sous le prix visé en premier
                             ecart = est.achat_vise[1] - est.cout_total_eur
@@ -131,19 +141,28 @@ class Bot:
                     self._pause()
             self._surveiller_panne(source.nom, total_source)
 
+        for nom in a_initialiser:
+            self.db.meta_set(f"init:{nom}", "1")
         candidats.sort(key=lambda c: c[0], reverse=True)
-        envoyees = 0
         vus = set()
+        envoyees = self._envoyer(candidats, self.r["max_alertes_par_cycle"], taux, vus)
+        envoyees += self._envoyer(libres, self.r.get("max_alertes_sans_limite_par_cycle", 20), taux, vus)
+        log.info("Cycle terminé : %d alerte(s) envoyée(s), %d candidat(s)", envoyees, len(vus))
+        return envoyees
+
+    def _envoyer(self, candidats: list, maximum: int, taux: float, vus: set) -> int:
+        envoyees = 0
         for _ecart, article, l, etat, raison, est, baisse in candidats:
             if l.key in vus:
                 continue
             vus.add(l.key)
-            if envoyees >= self.r["max_alertes_par_cycle"]:
+            if envoyees >= maximum:
                 # Pas envoyée : on ne la marque pas comme alertée, elle repassera au prochain cycle
                 self.db.enregistrer(l.key, article.nom, l.title, l.price_jpy,
                                     est.cout_total_eur, None, l.url_zenmarket, False)
                 continue
-            pmax = prix_max_jpy(est.achat_vise[1], taux, self.frais, self.profils[article.profil])
+            pmax = (prix_max_jpy(est.achat_vise[1], taux, self.frais, self.profils[article.profil])
+                    if est.achat_vise else None)
             source = self._source(l.source)
             if source is not None and hasattr(source, "details"):
                 source.details(l)  # photos + avis vendeur
@@ -160,7 +179,6 @@ class Bot:
             self.db.enregistrer(l.key, article.nom, l.title, l.price_jpy,
                                 est.cout_total_eur, None, l.url_zenmarket, ok)
             envoyees += ok
-        log.info("Cycle terminé : %d alerte(s) envoyée(s), %d candidat(s)", envoyees, len(vus))
         return envoyees
 
     # ------------------------------------------------------------ surveillance

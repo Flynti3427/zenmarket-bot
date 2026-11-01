@@ -50,6 +50,9 @@ def construire(article: Article, l: Listing, est: Estimation, etat: str, raison:
         "baisse": baisse,
         "signaux": signaux,
         "horodatage": time.time(),
+        "salon": article.salon,
+        "fil": article.fil,
+        "sans_limite": article.sans_limite,
     }
 
 

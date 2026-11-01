@@ -92,7 +92,7 @@ class DiscordServeur:
     def envoyer_alerte(self, a: dict) -> bool:
         meilleure = est_meilleure_affaire(a, self.economie_min_pct)
         payload = payload_v2(a, meilleure)
-        ok = self._poster(nom_salon(marque_de(a["article"])[1]), payload)
+        ok = self._poster(nom_salon(a.get("salon") or marque_de(a["article"])[1]), payload)
         if meilleure:
             self._poster(SALON_MEILLEURES, payload)
         return ok

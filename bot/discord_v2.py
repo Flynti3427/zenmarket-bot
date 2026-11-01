@@ -56,7 +56,9 @@ def _separateur() -> dict:
 
 def payload_v2(a: dict, meilleure: bool = False) -> dict:
     c, vise = a["cout"], a.get("achat_vise")
-    if a["baisse"]:
+    if a.get("sans_limite"):
+        entete = f"🆕 **{a['article']}** · nouvelle annonce"
+    elif a["baisse"]:
         entete = f"📉 **{a['article']}** · baisse de prix"
     elif meilleure:
         entete = f"🔥 **{a['article']}** · meilleure affaire"

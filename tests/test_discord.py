@@ -336,3 +336,112 @@ def test_un_webhook_par_salon(tmp_path, monkeypatch):
     envois.clear()
     bot.notifier.envoyer("Récap")
     assert envois[0][0] == salons["meilleures-affaires"]
+
+
+
+# ------------------------------------------------ salon wallet et fil keepall
+def _hooks(monkeypatch, refus=()):
+    from bot import discord_webhook
+    envois = []
+
+    class R:
+        def __init__(self, ok):
+            self.status_code, self.ok, self.text = (200 if ok else 404), ok, ""
+
+    def post(url, params, json, timeout):
+        envois.append(url)
+        return R(not any(r in url for r in refus))
+
+    monkeypatch.setattr(discord_webhook.requests, "post", post)
+    monkeypatch.setattr(discord_webhook.time, "sleep", lambda s: None)
+    hooks = {"louis-vuitton": "https://d/lv", "louis-vuitton/keepall": "https://d/lv?thread_id=42",
+             "wallet": "https://d/wallet", "meilleures-affaires": "https://d/best"}
+    return discord_webhook.DiscordWebhooks(hooks, 25), envois
+
+
+def _alerte_article(tmp_path, nom, titre, prix):
+    bot, notif, _ = _bot(tmp_path, [], DETAILS)
+    a = next(x for x in bot.articles if x.nom == nom)
+    l = Listing("mercari", "m7", titre, prix, "https://jp.mercari.com/item/m7",
+                "https://zenmarket.jp/fr/mercariproduct.aspx?itemCode=m7", seller_id="1")
+    etat, raison, est = bot.evaluer(a, l, TAUX)
+    from bot.alerte import construire
+    return construire(a, l, est, etat, raison, None, False, None, [], TAUX)
+
+
+def test_keepall_va_dans_son_fil(tmp_path, monkeypatch):
+    n, envois = _hooks(monkeypatch)
+    a = _alerte_article(tmp_path, "LV Keepall", "ルイヴィトン キーポル55 美品", 30000)
+    a["cout"]["total"] = 340  # juste sous 350 -> pas « meilleure affaire »
+    n.envoyer_alerte(a)
+    assert envois == ["https://d/lv?thread_id=42"]
+
+
+def test_keepall_repli_si_fil_archive(tmp_path, monkeypatch):
+    n, envois = _hooks(monkeypatch, refus=("thread_id",))
+    a = _alerte_article(tmp_path, "LV Keepall", "ルイヴィトン キーポル55 美品", 30000)
+    a["cout"]["total"] = 340
+    assert n.envoyer_alerte(a)
+    assert envois == ["https://d/lv?thread_id=42", "https://d/lv"]
+
+
+def test_wallets_vont_dans_wallet(tmp_path, monkeypatch):
+    n, envois = _hooks(monkeypatch)
+    a = _alerte_article(tmp_path, "Gucci wallet", "グッチ 長財布 GG", 9000)
+    assert a["sans_limite"] and a["achat_vise"] is None
+    n.envoyer_alerte(a)
+    assert envois == ["https://d/wallet"]                      # jamais « meilleure affaire » (pas de prix max)
+    from bot.discord_v2 import payload_v2
+    texte = "\n".join(c.get("content", "") for c in payload_v2(a)["components"][0]["components"])
+    assert "🆕 **Gucci wallet** · nouvelle annonce" in texte and "sous ton max" not in texte
+
+
+class SourceWallets:
+    nom = "mercari"
+
+    def __init__(self):
+        self.annonces = []
+
+    def rechercher(self, mot_cle, prix_min=0):
+        return self.annonces if "グッチ 財布" in mot_cle else []
+
+    def details(self, l):
+        pass
+
+
+def test_wallets_seulement_les_nouvelles(tmp_path):
+    bot, notif, _ = _bot(tmp_path, [], DETAILS)
+    src = SourceWallets()
+    bot.sources = [src]
+    deja = [Listing("mercari", f"w{i}", "グッチ 長財布", 9000 + i, "o", "z") for i in range(30)]
+    src.annonces = deja
+    assert bot.cycle() == 0                                    # 1er passage : mémorisées, pas d'alerte
+    nouvelles = [Listing("mercari", f"n{i}", "グッチ 二つ折り財布", 5000, "o", "z") for i in range(25)]
+    src.annonces = nouvelles + deja
+    assert bot.cycle() == 20                                   # plafond des wallets par tour
+    assert bot.cycle() == 5                                    # le reste au tour suivant
+    assert bot.cycle() == 0
+
+
+def test_wallets_ne_bloquent_pas_les_sacs(tmp_path):
+    bot, notif, _ = _bot(tmp_path, [], DETAILS)
+
+    class Mixte:
+        nom = "mercari"
+        def __init__(self):
+            self.tour = 0
+        def rechercher(self, mot_cle, prix_min=0):
+            if "スピーディ" in mot_cle:
+                return [speedy()] if self.tour else []
+            if "グッチ 財布" in mot_cle:
+                return [Listing("mercari", f"g{self.tour}-{i}", "グッチ 長財布", 9000, "o", "z") for i in range(30)]
+            return []
+        def details(self, l):
+            pass
+
+    src = Mixte()
+    bot.sources = [src]
+    bot.cycle()
+    src.tour = 1
+    bot.cycle()
+    assert notif.alertes[0]["article"] == "LV Speedy"          # le sac passe avant les wallets

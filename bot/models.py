@@ -62,6 +62,9 @@ class Article:
     achat: dict = field(default_factory=dict)    # prix d'achat visé (coût rendu France) par état
     revente: dict = field(default_factory=dict)  # prix de revente par état
     achat_tous_etats: Optional[float] = None     # seuil unique quel que soit l'état (ex. Speedy 450 €)
+    salon: Optional[str] = None                  # salon Discord forcé (ex. « wallet »), sinon celui de la marque
+    fil: Optional[str] = None                    # fil Discord dans ce salon (ex. « keepall » dans louis-vuitton)
+    sans_limite: bool = False                    # alerte pour toute nouvelle annonce, quel que soit le prix
 
     @classmethod
     def from_dict(cls, d: dict) -> "Article":
@@ -75,6 +78,9 @@ class Article:
             achat=lire_par_etat(d.get("achat")),
             revente=lire_par_etat(d.get("revente")),
             achat_tous_etats=float(d["achat_tous_etats"]) if d.get("achat_tous_etats") else None,
+            salon=d.get("salon"),
+            fil=d.get("fil"),
+            sans_limite=bool(d.get("sans_limite", False)),
         )
 
     def seuil_achat(self, etat: str) -> Optional[Fourchette]:

@@ -23,7 +23,8 @@ reglages:
   alerte_si_baisse_prix_pct: 10   # re-alerte si un article déjà signalé baisse de 10 %
   seuil_unique_tous_etats: true   # un seul seuil par article, quel que soit l'état
   meilleure_affaire_economie_pct: 25  # salon « meilleures-affaires » : coût livré au moins 25 % sous ton prix max
-  max_alertes_par_cycle: 15       # évite de spammer au premier démarrage
+  max_alertes_par_cycle: 15
+  max_alertes_sans_limite_par_cycle: 20   # wallets « toutes annonces » : 20 max par tour       # évite de spammer au premier démarrage
   recap_quotidien_heure: 9        # heure (Europe/Paris) du récap Telegram
   sources: [mercari, yahoo]       # Mercari Japon + Yahoo Enchères (JDirectItems)
   langue_zenmarket: fr            # liens zenmarket.jp/fr/...
@@ -72,9 +73,10 @@ exclusions_globales:
 articles:
   # =========== TABLEAU 1 : prix selon l'état (5/10 et 8/10) ===========
   - nom: LV Keepall
+    fil: keepall          # fil « keepall » dans le salon louis-vuitton
     recherches: [ルイヴィトン キーポル]
     doit_contenir: [キーポル, keepall]
-    exclure: [ナノ, XS, ミニ, ポーチ]
+    exclure: [ナノ, XS, ミニ, ポーチ, 財布]
     prix_min_jpy: 10000
     profil: sac
     achat:   { tres_bon: [300, 350], moyen: [220, 250] }
@@ -99,6 +101,7 @@ articles:
     revente: { tres_bon: [500, 550], moyen: [400, 450] }
 
   - nom: LV portefeuille (wallet)
+    salon: wallet
     recherches: [ルイヴィトン 長財布, ルイヴィトン 財布]
     doit_contenir: [財布, wallet, ウォレット, ポルトフォイユ]
     exclure: []
@@ -110,7 +113,7 @@ articles:
   - nom: LV Noé
     recherches: [ルイヴィトン ノエ]
     doit_contenir: [ノエ, noe, noé]
-    exclure: [ネオノエ, ノエル, ポーチ]
+    exclure: [ネオノエ, ノエル, ポーチ, 財布]
     prix_min_jpy: 10000
     profil: sac
     achat:   { tres_bon: [250, 300], moyen: [220, 250] }
@@ -119,7 +122,7 @@ articles:
   - nom: LV Saint-Germain
     recherches: [ルイヴィトン サンジェルマン]
     doit_contenir: [サンジェルマン, saint germain, saint-germain]
-    exclure: [ポーチ]
+    exclure: [ポーチ, 財布]
     prix_min_jpy: 3000
     profil: sac
     achat:   { tres_bon: [70, 110], moyen: [50, 70] }
@@ -137,7 +140,7 @@ articles:
   - nom: LV Ellipse
     recherches: [ルイヴィトン エリプス]
     doit_contenir: [エリプス, ellipse, elipse]
-    exclure: [ポーチ]
+    exclure: [ポーチ, 財布]
     prix_min_jpy: 8000
     profil: sac
     achat:   { tres_bon: null, moyen: 300 }   # tableau : achat 300 (5/10)
@@ -154,7 +157,7 @@ articles:
   - nom: Dior Boston
     recherches: [ディオール ボストンバッグ]
     doit_contenir: [ボストン, boston]
-    exclure: [ポーチ]
+    exclure: [ポーチ, 財布]
     prix_min_jpy: 5000
     profil: sac
     achat: {}   # pas de prix dans le tableau
@@ -170,7 +173,7 @@ articles:
   - nom: LV Trouville
     recherches: [ルイヴィトン トゥルーヴィル]
     doit_contenir: [トゥルーヴィル, トゥルービル, trouville]
-    exclure: [ポーチ]
+    exclure: [ポーチ, 財布]
     prix_min_jpy: 5000
     profil: sac
     achat: {}
@@ -178,7 +181,7 @@ articles:
   - nom: LV Pochette Accessoires
     recherches: [ルイヴィトン ポシェットアクセソワール, ルイヴィトン アクセソワール]
     doit_contenir: [アクセソワール, accessoires]
-    exclure: []
+    exclure: [財布]
     prix_min_jpy: 3000
     profil: petit
     achat: {}
@@ -214,7 +217,7 @@ articles:
   - nom: Chanel Camera Bag vintage
     recherches: [シャネル カメラバッグ]
     doit_contenir: [カメラ, camera]
-    exclure: [ポーチ]
+    exclure: [ポーチ, 財布]
     prix_min_jpy: 20000
     profil: sac
     achat:   { moyen: 800 }
@@ -223,7 +226,7 @@ articles:
   - nom: Prada Re-Edition 2005 nylon
     recherches: [プラダ リエディション 2005]
     doit_contenir: [2005]
-    exclure: []
+    exclure: [財布]
     prix_min_jpy: 15000
     profil: sac
     achat:   { moyen: 400 }
@@ -277,7 +280,7 @@ articles:
   - nom: Saint Laurent Lou Camera
     recherches: [サンローラン ルーカメラ, サンローラン カメラバッグ]
     doit_contenir: [カメラ, camera]
-    exclure: [ポーチ]
+    exclure: [ポーチ, 財布]
     prix_min_jpy: 10000
     profil: sac
     achat:   { moyen: 250 }
@@ -322,7 +325,7 @@ articles:
   - nom: Dior Book Tote
     recherches: [ディオール ブックトート]
     doit_contenir: [ブックトート, book tote]
-    exclure: [ポーチ]
+    exclure: [ポーチ, 財布]
     prix_min_jpy: 20000
     profil: sac
     achat:   { moyen: 450 }
@@ -331,7 +334,7 @@ articles:
   - nom: Fendi Baguette vintage Zucca
     recherches: [フェンディ バゲット ズッカ]
     doit_contenir: [バゲット, baguette]
-    exclure: [ママ, マンマ, ポーチ]
+    exclure: [ママ, マンマ, ポーチ, 財布]
     prix_min_jpy: 10000
     profil: sac
     achat:   { moyen: 300 }
@@ -340,7 +343,7 @@ articles:
   - nom: Fendi Spy vintage
     recherches: [フェンディ スパイバッグ]
     doit_contenir: [スパイ, spy]
-    exclure: [ポーチ]
+    exclure: [ポーチ, 財布]
     prix_min_jpy: 10000
     profil: sac
     achat:   { moyen: 250 }
@@ -349,7 +352,7 @@ articles:
   - nom: Fendi Mama Baguette vintage
     recherches: [フェンディ マンマバケット, フェンディ ママバケット]
     doit_contenir: [マンマ, ママ, mamma, mama]
-    exclure: [ポーチ]
+    exclure: [ポーチ, 財布]
     prix_min_jpy: 5000
     profil: sac
     achat:   { moyen: 200 }
@@ -358,7 +361,7 @@ articles:
   - nom: Bottega Veneta Jodie mini
     recherches: [ボッテガヴェネタ ジョディ]
     doit_contenir: [ジョディ, jodie]
-    exclure: []
+    exclure: [財布]
     prix_min_jpy: 20000
     profil: sac
     achat:   { moyen: 500 }
@@ -376,7 +379,7 @@ articles:
   - nom: Bottega Veneta Hobo vintage
     recherches: [ボッテガヴェネタ ホーボー]
     doit_contenir: [ホーボー, hobo]
-    exclure: [ポーチ]
+    exclure: [ポーチ, 財布]
     prix_min_jpy: 8000
     profil: sac
     achat:   { moyen: 250 }
@@ -403,7 +406,7 @@ articles:
   - nom: Céline Luggage Nano
     recherches: [セリーヌ ラゲージ ナノ]
     doit_contenir: [ナノ, nano]
-    exclure: [ポーチ]
+    exclure: [ポーチ, 財布]
     prix_min_jpy: 20000
     profil: sac
     achat:   { moyen: 350 }
@@ -430,16 +433,118 @@ articles:
   - nom: Chloé Nile Bracelet Bag
     recherches: [クロエ ナイル]
     doit_contenir: [ナイル, nile]
-    exclure: [ポーチ]
+    exclure: [ポーチ, 財布]
     prix_min_jpy: 10000
     profil: sac
     achat:   { moyen: 200 }   # pas de prix de revente dans le tableau
+
+  # =========== WALLETS (salon #wallet) : toutes les nouvelles annonces, quel que soit le prix ===========
+  # (au 1er passage le bot mémorise les annonces déjà en ligne, puis n'envoie que les nouvelles)
+  - nom: Chanel wallet
+    salon: wallet
+    sans_limite: true
+    recherches: [シャネル 財布]
+    doit_contenir: [財布, ウォレット, wallet]
+    exclure: [チェーンウォレット, ウォレットオンチェーン, woc, ポーチ, キーケース, カードケース, コインケース]
+    prix_min_jpy: 1000
+    profil: petit
+    achat: {}
+
+  - nom: Dior wallet
+    salon: wallet
+    sans_limite: true
+    recherches: [ディオール 財布]
+    doit_contenir: [財布, ウォレット, wallet]
+    exclure: [ポーチ, キーケース, カードケース, コインケース]
+    prix_min_jpy: 1000
+    profil: petit
+    achat: {}
+
+  - nom: Gucci wallet
+    salon: wallet
+    sans_limite: true
+    recherches: [グッチ 財布]
+    doit_contenir: [財布, ウォレット, wallet]
+    exclure: [ポーチ, キーケース, カードケース, コインケース]
+    prix_min_jpy: 1000
+    profil: petit
+    achat: {}
+
+  - nom: Prada wallet
+    salon: wallet
+    sans_limite: true
+    recherches: [プラダ 財布]
+    doit_contenir: [財布, ウォレット, wallet]
+    exclure: [ポーチ, キーケース, カードケース, コインケース]
+    prix_min_jpy: 1000
+    profil: petit
+    achat: {}
+
+  - nom: Saint Laurent wallet
+    salon: wallet
+    sans_limite: true
+    recherches: [サンローラン 財布]
+    doit_contenir: [財布, ウォレット, wallet]
+    exclure: [ポーチ, キーケース, カードケース, コインケース]
+    prix_min_jpy: 1000
+    profil: petit
+    achat: {}
+
+  - nom: Fendi wallet
+    salon: wallet
+    sans_limite: true
+    recherches: [フェンディ 財布]
+    doit_contenir: [財布, ウォレット, wallet]
+    exclure: [ポーチ, キーケース, カードケース, コインケース]
+    prix_min_jpy: 1000
+    profil: petit
+    achat: {}
+
+  - nom: Bottega Veneta wallet
+    salon: wallet
+    sans_limite: true
+    recherches: [ボッテガヴェネタ 財布]
+    doit_contenir: [財布, ウォレット, wallet]
+    exclure: [ポーチ, キーケース, カードケース, コインケース]
+    prix_min_jpy: 1000
+    profil: petit
+    achat: {}
+
+  - nom: Céline wallet
+    salon: wallet
+    sans_limite: true
+    recherches: [セリーヌ 財布]
+    doit_contenir: [財布, ウォレット, wallet]
+    exclure: [ポーチ, キーケース, カードケース, コインケース]
+    prix_min_jpy: 1000
+    profil: petit
+    achat: {}
+
+  - nom: Chloé wallet
+    salon: wallet
+    sans_limite: true
+    recherches: [クロエ 財布]
+    doit_contenir: [財布, ウォレット, wallet]
+    exclure: [ポーチ, キーケース, カードケース, コインケース]
+    prix_min_jpy: 1000
+    profil: petit
+    achat: {}
+
+  - nom: Coach wallet
+    salon: wallet
+    sans_limite: true
+    recherches: [コーチ 財布]
+    doit_contenir: [財布, ウォレット, wallet]
+    exclure: [ポーチ, キーケース, カードケース, コインケース]
+    prix_min_jpy: 1000
+    profil: petit
+    achat: {}
 
   # =========== Modèles du Canva absents du tableau (récap du matin seulement) ===========
   - nom: LV Speedy Damier Azur
     recherches: [ヴィトン スピーディ ダミエアズール]
     doit_contenir: [アズール, azur]
-    exclure: [ナノ, ミニ, ポーチ]
+    exclure: [ナノ, ミニ, ポーチ, 財布]
     prix_min_jpy: 10000
     profil: sac
     achat: {}
@@ -447,7 +552,7 @@ articles:
   - nom: Gucci Pelham
     recherches: [グッチ ペルハム]
     doit_contenir: [ペルハム, pelham]
-    exclure: [ポーチ]
+    exclure: [ポーチ, 財布]
     prix_min_jpy: 8000
     profil: sac
     achat: {}
@@ -455,7 +560,7 @@ articles:
   - nom: Jacquemus sac
     recherches: [ジャックムス バッグ]
     doit_contenir: [ジャックムス, jacquemus]
-    exclure: [ポーチ]
+    exclure: [ポーチ, 財布]
     prix_min_jpy: 5000
     profil: sac
     achat: {}
