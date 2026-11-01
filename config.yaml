@@ -1,0 +1,468 @@
+# =====================================================================
+#  CONFIGURATION DU BOT ZENMARKET
+#  Prix repris du tableau « Tableau prix sacs de luxe - Accompagnement élèves ».
+#
+#  RÈGLE D'ALERTE : le bot t'alerte quand le COÛT RENDU EN FRANCE
+#  (prix + ZenMarket + port + douane + TVA) est <= au prix d'achat du tableau
+#  (haut de la fourchette). En dessous du bas de la fourchette : alerte « 🔥 SOUS ta fourchette ».
+#
+#  États : tres_bon = 8/10 du tableau, moyen = 5/10 du tableau.
+#  [bas, haut] = fourchette ; un seul nombre = prix fixe ; null = pas de prix.
+#  Sans prix d'achat : pas d'alerte, l'article apparaît seulement dans le récap du matin.
+#  Si « tres_bon » est vide, le bot reprend le prix « moyen ».
+#  SEUIL UNIQUE (ton choix) : avec seuil_unique_tous_etats: true, chaque article alerte
+#  sous le haut de sa fourchette 8/10 (ou son prix unique), quel que soit l'état,
+#  mauvais état compris. Ex. Speedy : alerte sous 450 € même pour un 5/10 ou un sac abîmé.
+#  Mets false pour revenir aux limites par état. « achat_tous_etats: <prix> » sur un
+#  article force un autre seuil pour cet article.
+# =====================================================================
+
+reglages:
+  intervalle_minutes: 15          # un tour complet toutes les 15 min (reste dans le gratuit Google Cloud)
+  pause_entre_requetes_s: [1, 3]  # pause aléatoire entre deux requêtes (anti-blocage)
+  alerte_si_baisse_prix_pct: 10   # re-alerte si un article déjà signalé baisse de 10 %
+  seuil_unique_tous_etats: true   # un seul seuil par article, quel que soit l'état
+  max_alertes_par_cycle: 15       # évite de spammer au premier démarrage
+  recap_quotidien_heure: 9        # heure (Europe/Paris) du récap Telegram
+  sources: [mercari, yahoo]       # Mercari Japon + Yahoo Enchères (JDirectItems)
+  langue_zenmarket: fr            # liens zenmarket.jp/fr/...
+
+frais:
+  taux_jpy_eur_secours: 0.0057    # utilisé si le taux du jour (BCE) est indisponible
+  frais_service_zenmarket_jpy: 800  # Mercari et enchères : 800 ¥ / article
+  frais_depot_pct: 1.5            # frais d'alimentation du solde (carte/PayPal)
+  tva_pct: 20
+  seuil_droits_douane_eur: 150    # au-dessus : droits de douane + frais de dossier
+  frais_dossier_transporteur_eur: 15
+  droit_forfaitaire_ue_eur: 3     # colis <= 150 €
+
+# Port EMS estimé et droits de douane par type d'article (à ajuster après ton 1er colis)
+profils:
+  sac:      { port_eur: 40, droits_pct: 3 }    # sac ~1,5-2 kg emballé
+  petit:    { port_eur: 18, droits_pct: 3 }    # portefeuille, pochette, WOC (~0,5 kg)
+  vetement: { port_eur: 40, droits_pct: 12 }   # trench
+
+# Mots qui excluent une annonce (accessoires vendus seuls, contrefaçons...)
+exclusions_globales:
+  - 箱のみ      # boîte seule
+  - 保存袋のみ  # dustbag seul
+  - 袋のみ
+  - 空箱
+  - ショッパー  # sac papier de boutique
+  - 紙袋
+  - カデナのみ  # cadenas seul
+  - 鍵のみ
+  - チャーム
+  - キーホルダー
+  - ストラップのみ
+  - インナーバッグ
+  - バッグインバッグ
+  - リメイク
+  - パーツ
+  - ノベルティ
+  - カタログ
+  - レプリカ
+  - コピー
+  - 偽物
+  - 型紙
+  - ステッカー
+  - 写真のみ
+
+articles:
+  # =========== TABLEAU 1 : prix selon l'état (5/10 et 8/10) ===========
+  - nom: LV Keepall
+    recherches: [ルイヴィトン キーポル]
+    doit_contenir: [キーポル, keepall]
+    exclure: [ナノ, XS, ミニ]
+    prix_min_jpy: 10000
+    profil: sac
+    achat:   { tres_bon: [300, 350], moyen: [220, 250] }
+    revente: { tres_bon: [500, 550], moyen: [350, 400] }
+
+  - nom: LV Neverfull
+    recherches: [ルイヴィトン ネヴァーフル, ルイヴィトン ネバーフル]
+    doit_contenir: [ネヴァーフル, ネバーフル, neverfull]
+    exclure: [ポーチのみ, 財布]
+    prix_min_jpy: 10000
+    profil: sac
+    achat:   { tres_bon: [400, 450], moyen: [280, 320] }
+    revente: { tres_bon: [650, 750], moyen: [500, 550] }
+
+  - nom: LV Speedy
+    recherches: [ルイヴィトン スピーディ]
+    doit_contenir: [スピーディ, speedy]
+    exclure: [ナノ, ミニ, 財布]
+    prix_min_jpy: 10000
+    profil: sac
+    achat:   { tres_bon: [400, 450], moyen: [200, 220] }
+    revente: { tres_bon: [500, 550], moyen: [400, 450] }
+
+  - nom: LV portefeuille (wallet)
+    recherches: [ルイヴィトン 長財布, ルイヴィトン 財布]
+    doit_contenir: [財布, wallet, ウォレット, ポルトフォイユ]
+    exclure: []
+    prix_min_jpy: 1000
+    profil: petit
+    achat:   { tres_bon: [50, 60], moyen: [40, 50] }   # 8/10 = avec boîte
+    revente: { tres_bon: [100, 120], moyen: [75, 85] }
+
+  - nom: LV Noé
+    recherches: [ルイヴィトン ノエ]
+    doit_contenir: [ノエ, noe, noé]
+    exclure: [ネオノエ, ノエル]
+    prix_min_jpy: 10000
+    profil: sac
+    achat:   { tres_bon: [250, 300], moyen: [220, 250] }
+    revente: { tres_bon: [650, 700], moyen: [400, 450] }
+
+  - nom: LV Saint-Germain
+    recherches: [ルイヴィトン サンジェルマン]
+    doit_contenir: [サンジェルマン, saint germain, saint-germain]
+    exclure: []
+    prix_min_jpy: 3000
+    profil: sac
+    achat:   { tres_bon: [70, 110], moyen: [50, 70] }
+    revente: { tres_bon: [300, 350], moyen: [180, 220] }
+
+  - nom: LV Alma
+    recherches: [ルイヴィトン アルマ]
+    doit_contenir: [アルマ, alma]
+    exclure: [財布]
+    prix_min_jpy: 8000
+    profil: sac
+    achat:   { tres_bon: [200, 250], moyen: [150, 200] }
+    revente: { tres_bon: [350, 400], moyen: [250, 300] }
+
+  - nom: LV Ellipse
+    recherches: [ルイヴィトン エリプス]
+    doit_contenir: [エリプス, ellipse, elipse]
+    exclure: []
+    prix_min_jpy: 8000
+    profil: sac
+    achat:   { tres_bon: null, moyen: 300 }   # tableau : achat 300 (5/10)
+    revente: { tres_bon: 500, moyen: null }   # tableau : revente 500 (8/10)
+
+  - nom: Sac Céline (autre modèle)
+    recherches: [セリーヌ バッグ]
+    doit_contenir: [セリーヌ, celine, céline]
+    exclure: [財布, マカダム, トリオンフ, ラゲージ]   # modèles suivis à part
+    prix_min_jpy: 3000
+    profil: sac
+    achat:   { tres_bon: null, moyen: 115 }
+
+  - nom: Dior Boston
+    recherches: [ディオール ボストンバッグ]
+    doit_contenir: [ボストン, boston]
+    exclure: []
+    prix_min_jpy: 5000
+    profil: sac
+    achat: {}   # pas de prix dans le tableau
+
+  - nom: Dior Trotter
+    recherches: [ディオール トロッター]
+    doit_contenir: [トロッター, trotter]
+    exclure: [財布]
+    prix_min_jpy: 5000
+    profil: sac
+    achat: {}
+
+  - nom: LV Trouville
+    recherches: [ルイヴィトン トゥルーヴィル]
+    doit_contenir: [トゥルーヴィル, トゥルービル, trouville]
+    exclure: []
+    prix_min_jpy: 5000
+    profil: sac
+    achat: {}
+
+  - nom: LV Pochette Accessoires
+    recherches: [ルイヴィトン ポシェットアクセソワール, ルイヴィトン アクセソワール]
+    doit_contenir: [アクセソワール, accessoires]
+    exclure: []
+    prix_min_jpy: 3000
+    profil: petit
+    achat: {}
+
+  - nom: Coach vintage
+    recherches: [オールドコーチ バッグ]
+    doit_contenir: [コーチ, coach]
+    exclure: [財布]
+    prix_min_jpy: 2000
+    profil: sac
+    achat: {}
+
+  # =========== TABLEAU 2 : achat max visé / revente estimée ===========
+  # Un seul prix : il s'applique aux sacs en très bon et en état moyen.
+  - nom: Chanel Wallet on Chain (WOC)
+    recherches: [シャネル チェーンウォレット]
+    doit_contenir: [チェーンウォレット, ウォレットオンチェーン, woc, wallet on chain]
+    exclure: []
+    prix_min_jpy: 50000
+    profil: petit
+    achat:   { moyen: 1200 }
+    revente: { moyen: 1620 }
+
+  - nom: Chanel Cambon vintage
+    recherches: [シャネル カンボンライン]
+    doit_contenir: [カンボン, cambon]
+    exclure: [財布]
+    prix_min_jpy: 10000
+    profil: sac
+    achat:   { moyen: 500 }
+    revente: { moyen: 810 }
+
+  - nom: Chanel Camera Bag vintage
+    recherches: [シャネル カメラバッグ]
+    doit_contenir: [カメラ, camera]
+    exclure: []
+    prix_min_jpy: 20000
+    profil: sac
+    achat:   { moyen: 800 }
+    revente: { moyen: 1260 }
+
+  - nom: Prada Re-Edition 2005 nylon
+    recherches: [プラダ リエディション 2005]
+    doit_contenir: [2005]
+    exclure: []
+    prix_min_jpy: 15000
+    profil: sac
+    achat:   { moyen: 400 }
+    revente: { moyen: 630 }
+
+  - nom: Prada Tessuto vintage nylon
+    recherches: [プラダ テスート ナイロン バッグ]
+    doit_contenir: [テスート, tessuto, ナイロン, nylon]
+    exclure: [財布, リエディション]
+    prix_min_jpy: 3000
+    profil: sac
+    achat:   { moyen: 150 }
+    revente: { moyen: 270 }
+
+  - nom: Prada Galleria Saffiano
+    recherches: [プラダ ガレリア サフィアーノ]
+    doit_contenir: [ガレリア, galleria]
+    exclure: [財布]
+    prix_min_jpy: 15000
+    profil: sac
+    achat:   { moyen: 450 }
+    revente: { moyen: 720 }
+
+  - nom: Gucci Jackie vintage
+    recherches: [グッチ ジャッキー]
+    doit_contenir: [ジャッキー, jackie]
+    exclure: [財布]
+    prix_min_jpy: 8000
+    profil: sac
+    achat:   { moyen: 400 }
+    revente: { moyen: 810 }
+
+  - nom: Gucci Dionysus toile GG
+    recherches: [グッチ ディオニュソス]
+    doit_contenir: [ディオニュソス, dionysus]
+    exclure: [財布]
+    prix_min_jpy: 15000
+    profil: sac
+    achat:   { moyen: 350 }
+    revente: { moyen: 720 }
+
+  - nom: Gucci sac vintage toile GG
+    recherches: [オールドグッチ GGキャンバス バッグ]
+    doit_contenir: [gg]
+    exclure: [財布, ジャッキー, ディオニュソス]
+    prix_min_jpy: 2000
+    profil: sac
+    achat:   { moyen: 100 }
+    revente: { moyen: 270 }
+
+  - nom: Saint Laurent Lou Camera
+    recherches: [サンローラン ルーカメラ, サンローラン カメラバッグ]
+    doit_contenir: [カメラ, camera]
+    exclure: []
+    prix_min_jpy: 10000
+    profil: sac
+    achat:   { moyen: 250 }
+    revente: { moyen: 450 }
+
+  - nom: Saint Laurent Loulou petit format
+    recherches: [サンローラン ルル スモール]
+    doit_contenir: [ルル, loulou]
+    exclure: [財布, ミニ]
+    prix_min_jpy: 20000
+    profil: sac
+    achat:   { moyen: 450 }
+    revente: { moyen: 810 }
+
+  - nom: Saint Laurent Kate à chaîne
+    recherches: [サンローラン ケイト チェーン]
+    doit_contenir: [ケイト, kate]
+    exclure: [財布]
+    prix_min_jpy: 10000
+    profil: sac
+    achat:   { moyen: 300 }
+    revente: { moyen: 540 }
+
+  - nom: Dior Saddle vintage Oblique
+    recherches: [ディオール サドルバッグ]
+    doit_contenir: [サドル, saddle]
+    exclure: [財布, カードケース]
+    prix_min_jpy: 20000
+    profil: sac
+    achat:   { moyen: 500 }
+    revente: { moyen: 900 }
+
+  - nom: Lady Dior classique
+    recherches: [レディディオール]
+    doit_contenir: [レディディオール, レディ ディオール, lady dior]
+    exclure: [財布, ミニ, マイクロ]
+    prix_min_jpy: 30000
+    profil: sac
+    achat:   { moyen: 700 }
+    revente: { moyen: 1350 }
+
+  - nom: Dior Book Tote
+    recherches: [ディオール ブックトート]
+    doit_contenir: [ブックトート, book tote]
+    exclure: []
+    prix_min_jpy: 20000
+    profil: sac
+    achat:   { moyen: 450 }
+    revente: { moyen: 900 }
+
+  - nom: Fendi Baguette vintage Zucca
+    recherches: [フェンディ バゲット ズッカ]
+    doit_contenir: [バゲット, baguette]
+    exclure: [ママ, マンマ]
+    prix_min_jpy: 10000
+    profil: sac
+    achat:   { moyen: 300 }
+    revente: { moyen: 630 }
+
+  - nom: Fendi Spy vintage
+    recherches: [フェンディ スパイバッグ]
+    doit_contenir: [スパイ, spy]
+    exclure: []
+    prix_min_jpy: 10000
+    profil: sac
+    achat:   { moyen: 250 }
+    revente: { moyen: 540 }
+
+  - nom: Fendi Mama Baguette vintage
+    recherches: [フェンディ マンマバケット, フェンディ ママバケット]
+    doit_contenir: [マンマ, ママ, mamma, mama]
+    exclure: []
+    prix_min_jpy: 5000
+    profil: sac
+    achat:   { moyen: 200 }
+    revente: { moyen: 450 }
+
+  - nom: Bottega Veneta Jodie mini
+    recherches: [ボッテガヴェネタ ジョディ]
+    doit_contenir: [ジョディ, jodie]
+    exclure: []
+    prix_min_jpy: 20000
+    profil: sac
+    achat:   { moyen: 500 }
+    revente: { moyen: 900 }
+
+  - nom: Bottega Veneta Cassette
+    recherches: [ボッテガヴェネタ カセット]
+    doit_contenir: [カセット, cassette]
+    exclure: [財布]
+    prix_min_jpy: 15000
+    profil: sac
+    achat:   { moyen: 350 }
+    revente: { moyen: 630 }
+
+  - nom: Bottega Veneta Hobo vintage
+    recherches: [ボッテガヴェネタ ホーボー]
+    doit_contenir: [ホーボー, hobo]
+    exclure: []
+    prix_min_jpy: 8000
+    profil: sac
+    achat:   { moyen: 250 }
+    revente: { moyen: 450 }
+
+  - nom: Céline Macadam vintage Boston
+    recherches: [セリーヌ マカダム]
+    doit_contenir: [マカダム, macadam]
+    exclure: [財布]
+    prix_min_jpy: 3000
+    profil: sac
+    achat:   { moyen: 150 }
+    revente: { moyen: 360 }
+
+  - nom: Céline Triomphe cuir
+    recherches: [セリーヌ トリオンフ レザー バッグ]
+    doit_contenir: [トリオンフ, triomphe]
+    exclure: [キャンバス, 財布]
+    prix_min_jpy: 30000
+    profil: sac
+    achat:   { moyen: 700 }
+    revente: { moyen: 1350 }
+
+  - nom: Céline Luggage Nano
+    recherches: [セリーヌ ラゲージ ナノ]
+    doit_contenir: [ナノ, nano]
+    exclure: []
+    prix_min_jpy: 20000
+    profil: sac
+    achat:   { moyen: 350 }
+    revente: { moyen: 630 }
+
+  - nom: Chloé Marcie petit format
+    recherches: [クロエ マーシー]
+    doit_contenir: [マーシー, marcie]
+    exclure: [財布]
+    prix_min_jpy: 8000
+    profil: sac
+    achat:   { moyen: 200 }
+    revente: { moyen: 450 }
+
+  - nom: Chloé Paddington vintage
+    recherches: [クロエ パディントン]
+    doit_contenir: [パディントン, paddington]
+    exclure: [財布]
+    prix_min_jpy: 5000
+    profil: sac
+    achat:   { moyen: 150 }
+    revente: { moyen: 360 }
+
+  - nom: Chloé Nile Bracelet Bag
+    recherches: [クロエ ナイル]
+    doit_contenir: [ナイル, nile]
+    exclure: []
+    prix_min_jpy: 10000
+    profil: sac
+    achat:   { moyen: 200 }   # pas de prix de revente dans le tableau
+
+  # =========== Modèles du Canva absents du tableau (récap du matin seulement) ===========
+  - nom: LV Speedy Damier Azur
+    recherches: [ヴィトン スピーディ ダミエアズール]
+    doit_contenir: [アズール, azur]
+    exclure: [ナノ, ミニ]
+    prix_min_jpy: 10000
+    profil: sac
+    achat: {}
+
+  - nom: Gucci Pelham
+    recherches: [グッチ ペルハム]
+    doit_contenir: [ペルハム, pelham]
+    exclure: []
+    prix_min_jpy: 8000
+    profil: sac
+    achat: {}
+
+  - nom: Jacquemus sac
+    recherches: [ジャックムス バッグ]
+    doit_contenir: [ジャックムス, jacquemus]
+    exclure: []
+    prix_min_jpy: 5000
+    profil: sac
+    achat: {}
+
+  - nom: Burberry trench
+    recherches: [バーバリー トレンチコート]
+    doit_contenir: [トレンチ, trench]
+    exclure: [キッズ]
+    prix_min_jpy: 5000
+    profil: vetement
+    achat: {}

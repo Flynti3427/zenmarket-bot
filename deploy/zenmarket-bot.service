@@ -1,0 +1,17 @@
+# Service systemd pour un VPS Linux (Oracle Cloud gratuit, Hetzner, etc.)
+# Installation : voir README, option B.
+[Unit]
+Description=Bot ZenMarket (surveillance 24/7)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/zenmarket-bot
+EnvironmentFile=/home/ubuntu/zenmarket-bot/.env
+ExecStart=/home/ubuntu/zenmarket-bot/.venv/bin/python -m bot.main
+Restart=always
+RestartSec=30
+
+[Install]
+WantedBy=multi-user.target

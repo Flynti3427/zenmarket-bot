@@ -1,0 +1,63 @@
+# Lance un tour de recherche toutes les 15 minutes sur les serveurs de GitHub (gratuit, dépôt public).
+# La mémoire du bot (annonces déjà vues) est gardée d'un tour à l'autre dans le cache GitHub.
+name: Bot ZenMarket
+
+on:
+  schedule:
+    - cron: "*/15 * * * *"   # GitHub peut décaler de quelques minutes aux heures chargées
+  workflow_dispatch:          # bouton « Run workflow » pour lancer un tour à la main
+
+concurrency:
+  group: bot-zenmarket
+  cancel-in-progress: false   # jamais deux tours en même temps
+
+permissions:
+  contents: write             # seulement pour le commit anti-mise-en-veille (voir dernière étape)
+
+jobs:
+  recherche:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Installer les dépendances
+        run: pip install -r requirements.txt
+
+      - name: Récupérer la mémoire du bot
+        uses: actions/cache/restore@v4
+        with:
+          path: data
+          key: memoire-${{ github.run_id }}
+          restore-keys: memoire-
+
+      - name: Un tour de recherche
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        run: python -m bot.main --once
+
+      - name: Sauvegarder la mémoire du bot
+        if: always()
+        uses: actions/cache/save@v4
+        with:
+          path: data
+          key: memoire-${{ github.run_id }}-${{ github.run_attempt }}
+
+      # GitHub met en pause les tâches planifiées d'un dépôt public sans activité depuis 60 jours.
+      # Un petit commit tous les 40 jours l'en empêche.
+      - name: Garder le bot actif
+        run: |
+          dernier=$(git log -1 --format=%ct)
+          if [ $(( $(date +%s) - dernier )) -gt $(( 40 * 86400 )) ]; then
+            git config user.name "zenmarket-bot"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            date -u > .keepalive
+            git add .keepalive
+            git commit -m "Maintien du bot actif"
+            git push
+          fi
