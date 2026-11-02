@@ -142,12 +142,14 @@ def payload_v2(a: dict, meilleure: bool = False) -> dict:
 
 
 def payload_rappel(a: dict, prix_jpy: int, prix_eur: float, cout_total: float,
-                   prix_max_jpy: int | None, vu_ts: float | None, offres: int | None = None) -> dict:
+                   prix_max_jpy: int | None, vu_ts: float | None, offres: int | None = None,
+                   dernier: bool = False) -> dict:
     """Rappel envoyé quelques heures avant la fin d'une enchère déjà alertée."""
     ts = int(a["fin_ts"])
     vise = a.get("achat_vise")
     trop_cher = bool(vise) and cout_total > vise[1]
-    lignes = [f"⏰ **Rappel · {a['article']}** · l'enchère se termine **<t:{ts}:R>** (<t:{ts}:t>)"]
+    titre = "🚨 **Dernier rappel" if dernier else "⏰ **Rappel"
+    lignes = [f"{titre} · {a['article']}** · l'enchère se termine **<t:{ts}:R>** (<t:{ts}:t>)"]
     prix = f"Prix actuel : **{jpy(prix_jpy)}** (≈ {eur(prix_eur)})"
     if prix_jpy > a["prix_jpy"]:
         prix += f" · ⬆️ +{jpy(prix_jpy - a['prix_jpy'])} depuis l'alerte"

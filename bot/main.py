@@ -183,21 +183,30 @@ class Bot:
 
     # ------------------------------------------------------- rappels d'enchères
     def rappels_encheres(self) -> int:
-        """Rappel dans le salon de l'alerte quand une enchère alertée se termine bientôt."""
-        heures = self.r.get("rappel_enchere_heures", 3)
-        if not heures or not hasattr(self.notifier, "envoyer_rappel"):
+        """Rappels dans le salon de l'alerte quand une enchère alertée se termine bientôt
+        (par défaut 3 h puis 30 min avant la fin). Un seul message par seuil et par enchère."""
+        seuils = self.r.get("rappel_enchere_heures", [3, 0.5])
+        if not isinstance(seuils, list):
+            seuils = [seuils]
+        seuils = sorted((float(h) for h in seuils if h), reverse=True)
+        if not seuils or not hasattr(self.notifier, "envoyer_rappel"):
             return 0
         from .discord_v2 import payload_rappel
         taux = self.fx.jpy_eur()
+        maintenant = time.time()
         envoyes = 0
-        for a in self.db.encheres_qui_finissent(time.time() + heures * 3600):
-            cle = f"rappel:{a['cle']}"
-            if self.db.meta_get(cle):
+        for a in self.db.encheres_qui_finissent(maintenant + seuils[0] * 3600):
+            reste = a["fin_ts"] - maintenant
+            # seuils atteints, encore à envoyer, et pas déjà « couverts » par l'alerte elle-même
+            a_faire = [h for h in seuils
+                       if reste <= h * 3600
+                       and a["fin_ts"] - a["horodatage"] > h * 3600
+                       and not self.db.meta_get(f"rappel:{a['cle']}:{h:g}")]
+            if not a_faire:
                 continue
-            # alerte envoyée alors qu'il restait déjà moins de X h : elle montre le compte à rebours, pas de rappel
-            if a["fin_ts"] - a["horodatage"] <= heures * 3600:
-                self.db.meta_set(cle, "inutile")
-                continue
+            for h in a_faire:  # on n'envoie que le plus urgent, les autres sont marqués comme faits
+                self.db.meta_set(f"rappel:{a['cle']}:{h:g}", "couvert")
+            h = min(a_faire)
             article = next((x for x in self.articles if x.nom == a["article"]), None)
             if self.db.est_bloque(a["cle"]) or article is None:
                 continue
@@ -211,10 +220,13 @@ class Bot:
             est = cout_rendu_france(prix, taux, self.frais, self.profils[article.profil])
             vise = a.get("achat_vise")
             pmax = prix_max_jpy(vise[1], taux, self.frais, self.profils[article.profil]) if vise else None
-            payload = payload_rappel(a, prix, est.prix_article_eur, est.cout_total_eur, pmax, vu_ts, offres)
+            payload = payload_rappel(a, prix, est.prix_article_eur, est.cout_total_eur, pmax, vu_ts, offres,
+                                     dernier=(h == seuils[-1] and len(seuils) > 1))
             if self.notifier.envoyer_rappel(a, payload):
-                self.db.meta_set(cle, "1")
+                self.db.meta_set(f"rappel:{a['cle']}:{h:g}", "1")
                 envoyes += 1
+            else:
+                self.db.meta_set(f"rappel:{a['cle']}:{h:g}", "")  # échec : on réessaiera au tour suivant
         if envoyes:
             log.info("%d rappel(s) d'enchère envoyé(s)", envoyes)
         return envoyes

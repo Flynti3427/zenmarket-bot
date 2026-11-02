@@ -570,3 +570,39 @@ def test_rappel_lit_le_prix_sur_la_page(tmp_path, monkeypatch):
     bot.rappels_encheres()
     texte = notif.rappels[0][1]["components"][0]["components"][0]["content"]
     assert "52 000 ¥" in texte and "4 enchères" in texte
+
+
+def test_deux_rappels_3h_puis_30min(tmp_path, monkeypatch):
+    import time as _t
+    bot, notif, db, l = _bot_rappels(tmp_path, 2 * 86400)
+    bot.cycle()
+    vrai = _t.time
+    monkeypatch.setattr("time.time", lambda: vrai() + 2 * 86400 - 2.5 * 3600)   # 2 h 30 avant
+    assert bot.rappels_encheres() == 1
+    assert bot.rappels_encheres() == 0
+    monkeypatch.setattr("time.time", lambda: vrai() + 2 * 86400 - 20 * 60)      # 20 min avant
+    assert bot.rappels_encheres() == 1
+    assert bot.rappels_encheres() == 0
+    textes = [p["components"][0]["components"][0]["content"] for _, p in notif.rappels]
+    assert textes[0].startswith("⏰ **Rappel") and textes[1].startswith("🚨 **Dernier rappel")
+
+
+def test_un_seul_rappel_si_deja_tres_proche(tmp_path, monkeypatch):
+    import time as _t
+    bot, notif, db, l = _bot_rappels(tmp_path, 2 * 86400)
+    bot.cycle()
+    vrai = _t.time
+    monkeypatch.setattr("time.time", lambda: vrai() + 2 * 86400 - 10 * 60)      # bot arrêté longtemps
+    assert bot.rappels_encheres() == 1                                            # pas 2 messages d'un coup
+    assert notif.rappels[0][1]["components"][0]["components"][0]["content"].startswith("🚨")
+    assert bot.rappels_encheres() == 0
+
+
+def test_alerte_a_1h_de_la_fin_garde_le_rappel_30min(tmp_path, monkeypatch):
+    import time as _t
+    bot, notif, db, l = _bot_rappels(tmp_path, 3600)                              # alerte 1 h avant
+    bot.cycle()
+    assert bot.rappels_encheres() == 0
+    vrai = _t.time
+    monkeypatch.setattr("time.time", lambda: vrai() + 3600 - 20 * 60)
+    assert bot.rappels_encheres() == 1
