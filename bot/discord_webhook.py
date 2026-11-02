@@ -78,7 +78,13 @@ class DiscordWebhooks:
     dans « meilleures-affaires », qui reçoit aussi le démarrage, le récap et les pannes.
     """
 
-    def __init__(self, salons: dict[str, str], economie_min_pct: float = 25):
+    def __init__(self, salons: dict[str, str], economie_min_pct: float = 25, fils: dict | None = None):
+        salons = dict(salons)
+        # fils Discord déclarés dans config.yaml (« wallet/lots »: ID) : même webhook que le salon + thread_id
+        for cle, fil_id in (fils or {}).items():
+            base = salons.get(cle.split("/")[0])
+            if base and fil_id and cle not in salons:
+                salons[cle] = f"{base}{'&' if '?' in base else '?'}thread_id={fil_id}"
         self.salons = {k: DiscordWebhook(v, economie_min_pct) for k, v in salons.items() if v}
         self.economie_min_pct = economie_min_pct
         self.secours = self.salons.get("meilleures-affaires") or next(iter(self.salons.values()))

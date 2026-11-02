@@ -119,7 +119,7 @@ def test_prix_unique_vaut_pour_tres_bon():
 
 def test_tous_les_articles_du_tableau_presents():
     noms = {a["nom"] for a in CFG["articles"]}
-    assert len(CFG["articles"]) == 55  # 45 du tableau + 10 wallets
+    assert len(CFG["articles"]) == 57  # 45 du tableau + 10 wallets + 2 lots
     for n in ["LV Saint-Germain", "LV Alma", "LV Ellipse", "Chanel Wallet on Chain (WOC)",
               "Lady Dior classique", "Bottega Veneta Jodie mini", "Chloé Nile Bracelet Bag"]:
         assert n in noms
@@ -303,3 +303,22 @@ def test_yahoo_heure_de_fin():
     assert [a.item_id for a in annonces] == ["n1"]           # l'enchère terminée est ignorée
     assert annonces[0].fin_ts == fin.timestamp()
     assert abs(annonces[0].fin_ts - _time.time() - 2 * 86400) < 5
+
+
+def test_lots_de_portefeuilles():
+    lot_lv = art("Lot portefeuilles LV", unique=False)
+    lot = art("Lot portefeuilles marques", unique=False)
+    wallet_gucci = art("Gucci wallet", unique=False)
+    ex = CFG["exclusions_globales"]
+    assert correspond(lot_lv, L("ルイヴィトン 財布 5点 まとめ売り モノグラム", price=20000), ex)
+    assert not correspond(lot_lv, L("ルイヴィトン 長財布 モノグラム", price=20000), ex)       # un seul wallet
+    assert not correspond(lot_lv, L("ルイヴィトン バッグ まとめ売り", price=20000), ex)       # pas des wallets
+    assert correspond(lot, L("ブランド財布 まとめ売り 10点 グッチ プラダ", price=15000), ex)
+    assert not correspond(wallet_gucci, L("グッチ 財布 まとめ 3点", price=15000), ex)        # le lot ne va pas dans #wallet
+    assert correspond(wallet_gucci, L("グッチ 長財布 GG", price=15000), ex)
+
+
+def test_cravate_exclue():
+    macadam = art("Céline Macadam vintage Boston", unique=False)
+    assert not correspond(macadam, L("セリーヌ ネクタイ シルク マカダム トリオンフ ブラゾン グレー", price=7200),
+                          CFG["exclusions_globales"])

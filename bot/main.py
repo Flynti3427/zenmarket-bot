@@ -308,7 +308,8 @@ def main():
         import json
 
         from .discord_webhook import DiscordWebhooks
-        notifier = DiscordWebhooks(json.loads(webhooks), economie)
+        notifier = DiscordWebhooks(json.loads(webhooks), economie,
+                                   fils=config["reglages"].get("fils_discord"))
     elif webhook:
         from .discord_webhook import DiscordWebhook
         notifier = DiscordWebhook(webhook, economie)

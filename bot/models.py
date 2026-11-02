@@ -45,6 +45,15 @@ def lire_fourchette(valeur) -> Optional[Fourchette]:
     return (float(bas), float(haut))
 
 
+def _groupes(valeur) -> list[list[str]]:
+    """[a, b] -> [[a, b]] ; [[a, b], [c]] -> tel quel ; mots en minuscules."""
+    if not valeur:
+        return []
+    if all(not isinstance(v, list) for v in valeur):
+        valeur = [valeur]
+    return [[str(m).lower() for m in g] for g in valeur if g]
+
+
 def lire_par_etat(d: dict | None) -> dict[str, Optional[Fourchette]]:
     d = d or {}
     return {e: lire_fourchette(d.get(e)) for e in ETATS}
@@ -66,6 +75,7 @@ class Article:
     salon: Optional[str] = None                  # salon Discord forcé (ex. « wallet »), sinon celui de la marque
     fil: Optional[str] = None                    # fil Discord dans ce salon (ex. « keepall » dans louis-vuitton)
     sans_limite: bool = False                    # alerte pour toute nouvelle annonce, quel que soit le prix
+    doit_contenir_aussi: list = field(default_factory=list)  # autres groupes : un mot de CHAQUE groupe requis
 
     @classmethod
     def from_dict(cls, d: dict) -> "Article":
@@ -82,6 +92,7 @@ class Article:
             salon=d.get("salon"),
             fil=d.get("fil"),
             sans_limite=bool(d.get("sans_limite", False)),
+            doit_contenir_aussi=_groupes(d.get("doit_contenir_aussi")),
         )
 
     def seuil_achat(self, etat: str) -> Optional[Fourchette]:

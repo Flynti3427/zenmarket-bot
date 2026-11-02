@@ -45,6 +45,9 @@ def correspond(article: Article, listing: Listing, exclusions_globales: list[str
         return False
     if article.doit_contenir and not any(normaliser(m) in titre for m in article.doit_contenir):
         return False
+    for groupe in article.doit_contenir_aussi:
+        if not any(normaliser(m) in titre for m in groupe):
+            return False
     for mot in [str(m) for m in exclusions_globales] + article.exclure:
         if normaliser(mot) in titre:
             return False

@@ -256,7 +256,7 @@ def test_marques_de_tous_les_articles():
     assert all(m[0] != "Autres" for m in marques.values()), marques
     assert marques["Lady Dior classique"] == ("Dior", "dior")
     assert marques["Sac Céline (autre modèle)"] == ("Céline", "celine")
-    assert len({m[1] for m in marques.values()}) == 13
+    assert len({m[1] for m in marques.values()}) == 14  # 13 marques + wallet (lots)
 
 
 def test_meilleure_affaire():
@@ -303,7 +303,7 @@ def test_salons_crees_et_routage(tmp_path, monkeypatch):
     noms = [s["name"] for s in api.salons]
     assert "ZenMarket" in noms and SALON_MEILLEURES in noms and nom_salon("louis-vuitton") in noms
     assert noms.count(nom_salon("chanel")) == 1            # pas de doublon
-    assert len(d.salons) == 14                              # 13 marques + meilleures affaires
+    assert len(d.salons) == 15                              # 13 marques + wallet + meilleures affaires
     d.preparer()                                            # 2e tour : rien de recréé
     assert len(api.salons) == len(noms)
 
@@ -457,3 +457,25 @@ def test_compte_a_rebours_enchere(tmp_path):
     texte = _textes(payload_v2(notif.alertes[0])["components"][0])
     assert "⏳ **Fin de l'enchère <t:1794000000:R>** · <t:1794000000:f>" in texte
     assert "ne mise pas plus de" in texte
+
+
+def test_fils_depuis_la_config(monkeypatch):
+    from bot import discord_webhook
+    n = discord_webhook.DiscordWebhooks({"wallet": "https://d/w", "louis-vuitton": "https://d/lv"}, 25,
+                                        fils={"wallet/lots": "99", "louis-vuitton/keepall": "42",
+                                              "inconnu/x": "1"})
+    assert n.salons["wallet/lots"].url == "https://d/w?thread_id=99"
+    assert n.salons["louis-vuitton/keepall"].url == "https://d/lv?thread_id=42"
+    assert "inconnu/x" not in n.salons
+    envois = []
+
+    class R:
+        status_code, ok, text = 200, True, ""
+
+    monkeypatch.setattr(discord_webhook.requests, "post", lambda url, params, json, timeout: envois.append(url) or R())
+    monkeypatch.setattr(discord_webhook.time, "sleep", lambda s: None)
+    a = {"article": "Lot portefeuilles LV", "salon": "wallet", "fil": "lots", "achat_vise": None, "signaux": [],
+         "cout": {"total": 100}}
+    monkeypatch.setattr(discord_webhook, "payload_v2", lambda a, m=False: {})
+    n.envoyer_alerte(a)
+    assert envois == ["https://d/w?thread_id=99"]

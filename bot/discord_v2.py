@@ -12,6 +12,7 @@ VERT, BLEU, ORANGE, ROUGE = 0x2ECC71, 0x5865F2, 0xE67E22, 0xE74C3C
 
 # Marque affichée et salon Discord, déduits du nom de l'article
 MARQUES = [
+    ("Lot portefeuilles", "Portefeuilles", "wallet"),
     ("LV ", "Louis Vuitton", "louis-vuitton"),
     ("Chanel", "Chanel", "chanel"),
     ("Lady Dior", "Dior", "dior"),
