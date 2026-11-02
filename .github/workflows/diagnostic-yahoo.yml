@@ -30,6 +30,21 @@ jobs:
               r2 = requete(s, "GET", annonces[0].url_original)
               open("diag/annonce.html", "w").write(r2.text)
           print(len(annonces), "annonces")
+          print("=== ANALYSE", json.dumps([a.__dict__ for a in annonces[:3]], ensure_ascii=False))
+          h = r.text
+          print("=== ATTRIBUTS data-auction-*", sorted(set(re.findall(r'data-auction-[a-z]+', h))))
+          print("=== CLASSES Product__", sorted(set(re.findall(r'Product__[A-Za-z]+', h)))[:80])
+          i = h.find(annonces[0].item_id) if annonces else -1
+          print("=== EXTRAIT RECHERCHE", re.sub(r"\s+", " ", h[max(0, i-1500):i+3000]) if i >= 0 else "introuvable")
+          for m in re.finditer(r'(?i)(end(?:time|date|_time|At)?|closing|終了)[^<>]{0,80}', h):
+              print("=== FIN?", m.group(0)[:120]); break
+          if annonces:
+              h2 = r2.text
+              for motif in [r'(?i)"end(?:Time|Date|time)"\s*:\s*"?[^",}]{0,40}', r'終了日時[^<]{0,200}', r'(?i)endtime[^<]{0,80}', r'残り時間[^<]{0,200}']:
+                  ms = re.findall(motif, h2)[:3]
+                  print("=== ANNONCE", motif, ms)
+              j = h2.find("終了")
+              print("=== EXTRAIT ANNONCE", re.sub(r"\s+", " ", re.sub(r"<[^>]+>", " ", h2[max(0, j-300):j+600])) if j >= 0 else "pas de 終了")
           PY
       - uses: actions/upload-artifact@v4
         with:
