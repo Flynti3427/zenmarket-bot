@@ -30,6 +30,22 @@ jobs:
               r2 = requete(s, "GET", annonces[0].url_original)
               open("diag/annonce.html", "w").write(r2.text)
           print(len(annonces), "annonces")
+          from bs4 import BeautifulSoup
+          from bot.sources.yahoo import _parcourir_json
+          trouves = []
+          for sc in BeautifulSoup(r.text, "html.parser").find_all("script"):
+              t = sc.string or ""
+              if "auctionId" in t:
+                  try:
+                      _parcourir_json(json.loads(t[t.find("{"):].rstrip(";\n ")), trouves)
+                  except Exception as e:
+                      print("=== JSON KO", e)
+          print("=== NB DICTS", len(trouves))
+          for d in trouves[:2]:
+              print("=== CLES", sorted(d.keys()))
+              print("=== TEMPS", {k: v for k, v in d.items() if any(x in k.lower() for x in ("end", "time", "left", "date", "bid"))})
+          idx = r.text.find('endtime')
+          print("=== CONTEXTE endtime", re.sub(r"\s+", " ", r.text[max(0, idx-700):idx+200]))
           print("=== ANALYSE", json.dumps([a.__dict__ for a in annonces[:3]], ensure_ascii=False))
           h = r.text
           print("=== ATTRIBUTS data-auction-*", sorted(set(re.findall(r'data-auction-[a-z]+', h))))
