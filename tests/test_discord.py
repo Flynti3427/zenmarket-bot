@@ -479,3 +479,94 @@ def test_fils_depuis_la_config(monkeypatch):
     monkeypatch.setattr(discord_webhook, "payload_v2", lambda a, m=False: {})
     n.envoyer_alerte(a)
     assert envois == ["https://d/w?thread_id=99"]
+
+
+# ------------------------------------------------------- rappels d'enchères
+class NotifRappels(NotifAlertes):
+    def __init__(self):
+        super().__init__()
+        self.rappels = []
+
+    def envoyer_rappel(self, a, payload):
+        self.rappels.append((a, payload))
+        return True
+
+
+def _bot_rappels(tmp_path, fin_dans_s, prix=25000):
+    import time as _t
+    bot, _, db = _bot(tmp_path, [], DETAILS)
+    notif = NotifRappels()
+    bot.notifier = notif
+    l = speedy(prix=prix)
+    l.source, l.is_auction, l.fin_ts = "yahoo", True, _t.time() + fin_dans_s
+    l.url_zenmarket = "https://zenmarket.jp/fr/auction.aspx?itemCode=m42"
+    bot.sources = [FausseSource([l])]
+    return bot, notif, db, l
+
+
+def test_rappel_3h_avant_la_fin(tmp_path, monkeypatch):
+    import time as _t
+    bot, notif, db, l = _bot_rappels(tmp_path, 6 * 86400)        # enchère qui finit dans 6 jours
+    bot.cycle()
+    assert len(notif.alertes) == 1
+    assert bot.rappels_encheres() == 0                              # trop tôt
+    vrai = _t.time
+    monkeypatch.setattr("time.time", lambda: vrai() + 6 * 86400 - 2 * 3600)  # 2 h avant la fin
+    db.enregistrer(l.key, "LV Speedy", l.title, 40000, 0, None, "z", False)   # le prix a monté
+    assert bot.rappels_encheres() == 1
+    a, payload = notif.rappels[0]
+    texte = payload["components"][0]["components"][0]["content"]
+    assert "⏰ **Rappel · LV Speedy**" in texte and f"<t:{int(l.fin_ts)}:R>" in texte
+    assert "40 000 ¥" in texte and "+15 000 ¥ depuis l'alerte" in texte
+    assert "Tu peux encore miser jusqu'à" in texte
+    assert bot.rappels_encheres() == 0                              # un seul rappel par enchère
+
+
+def test_rappel_signale_trop_cher(tmp_path, monkeypatch):
+    import time as _t
+    bot, notif, db, l = _bot_rappels(tmp_path, 86400)
+    bot.cycle()
+    vrai = _t.time
+    monkeypatch.setattr("time.time", lambda: vrai() + 86400 - 3600)
+    db.enregistrer(l.key, "LV Speedy", l.title, 90000, 0, None, "z", False)
+    bot.rappels_encheres()
+    texte = notif.rappels[0][1]["components"][0]["components"][0]["content"]
+    assert "Déjà au-dessus de ton prix max" in texte
+
+
+def test_pas_de_rappel_si_alerte_deja_proche_de_la_fin(tmp_path):
+    bot, notif, db, l = _bot_rappels(tmp_path, 2 * 3600)            # alerte 2 h avant la fin
+    bot.cycle()
+    assert bot.rappels_encheres() == 0
+
+
+def test_rappel_meme_salon_que_l_alerte(monkeypatch):
+    from bot import discord_webhook
+    envois = []
+
+    class R:
+        status_code, ok, text = 200, True, ""
+
+    monkeypatch.setattr(discord_webhook.requests, "post", lambda url, params, json, timeout: envois.append(url) or R())
+    monkeypatch.setattr(discord_webhook.time, "sleep", lambda s: None)
+    n = discord_webhook.DiscordWebhooks({"louis-vuitton": "https://d/lv", "meilleures-affaires": "https://d/b"}, 25,
+                                        fils={"louis-vuitton/keepall": "42"})
+    n.envoyer_rappel({"article": "LV Keepall", "fil": "keepall"}, {})
+    n.envoyer_rappel({"article": "LV Speedy"}, {})
+    assert envois == ["https://d/lv?thread_id=42", "https://d/lv"]  # jamais copié dans meilleures-affaires
+
+
+def test_rappel_lit_le_prix_sur_la_page(tmp_path, monkeypatch):
+    import time as _t
+    bot, notif, db, l = _bot_rappels(tmp_path, 86400)
+    bot.cycle()
+    src = bot.sources[0]
+    src.etat_enchere = lambda item_id: (52000, 4)
+    vrai = _t.time
+    monkeypatch.setattr("time.time", lambda: vrai() + 86400 - 3600)
+    a = db.alerte(l.key)
+    a["source"] = "mercari"  # la fausse source s'appelle « mercari »
+    db.sauver_alerte(l.key, a)
+    bot.rappels_encheres()
+    texte = notif.rappels[0][1]["components"][0]["components"][0]["content"]
+    assert "52 000 ¥" in texte and "4 enchères" in texte

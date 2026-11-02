@@ -139,3 +139,39 @@ def payload_v2(a: dict, meilleure: bool = False) -> dict:
     return {"flags": FLAG_COMPONENTS_V2,
             "components": [{"type": 17, "accent_color": couleur, "components": blocs}],
             "allowed_mentions": {"parse": []}}
+
+
+def payload_rappel(a: dict, prix_jpy: int, prix_eur: float, cout_total: float,
+                   prix_max_jpy: int | None, vu_ts: float | None, offres: int | None = None) -> dict:
+    """Rappel envoyé quelques heures avant la fin d'une enchère déjà alertée."""
+    ts = int(a["fin_ts"])
+    vise = a.get("achat_vise")
+    trop_cher = bool(vise) and cout_total > vise[1]
+    lignes = [f"⏰ **Rappel · {a['article']}** · l'enchère se termine **<t:{ts}:R>** (<t:{ts}:t>)"]
+    prix = f"Prix actuel : **{jpy(prix_jpy)}** (≈ {eur(prix_eur)})"
+    if prix_jpy > a["prix_jpy"]:
+        prix += f" · ⬆️ +{jpy(prix_jpy - a['prix_jpy'])} depuis l'alerte"
+    if offres is not None:
+        prix += f" · {offres} enchère{'s' if offres > 1 else ''}"
+    if vu_ts:
+        prix += f" · vu <t:{int(vu_ts)}:R>"
+    lignes.append(prix)
+    total = f"📦 Total livré au prix actuel : **{eur(cout_total)}**"
+    if vise:
+        total += f" · ton max {eur(vise[1])}"
+    lignes.append(total)
+    if trop_cher:
+        lignes.append("🔴 **Déjà au-dessus de ton prix max** : n'enchéris plus.")
+    elif prix_max_jpy:
+        lignes.append(f"🟢 Tu peux encore miser jusqu'à **{jpy(prix_max_jpy)}**")
+    blocs = [_texte("\n".join(lignes))]
+    photos = [p for p in (a.get("photos") or []) if p][:1]
+    if photos:
+        blocs.append({"type": 12, "items": [{"media": {"url": photos[0]}}]})
+    blocs.append({"type": 1, "components": [
+        {"type": 2, "style": 5, "label": "Enchérir sur ZenMarket", "emoji": {"name": "🛒"}, "url": a["url_zenmarket"]},
+    ]})
+    blocs.append(_texte(f"-# 🇯🇵 {a['titre'][:150]}"))
+    return {"flags": FLAG_COMPONENTS_V2,
+            "components": [{"type": 17, "accent_color": ROUGE if trop_cher else ORANGE, "components": blocs}],
+            "allowed_mentions": {"parse": []}}

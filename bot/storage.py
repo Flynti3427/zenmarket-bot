@@ -76,6 +76,22 @@ class Stockage:
         self._x("INSERT OR REPLACE INTO alertes (cle, donnees, envoyee) VALUES (?, ?, ?)",
                 (cle, json.dumps(donnees, ensure_ascii=False), time.time()), commit=True)
 
+    def encheres_qui_finissent(self, avant_ts: float) -> list[dict]:
+        """Alertes d'enchères pas encore terminées dont la fin est avant `avant_ts`."""
+        maintenant = time.time()
+        res = []
+        for (donnees,) in self._x("SELECT donnees FROM alertes"):
+            a = json.loads(donnees)
+            fin = a.get("fin_ts")
+            if a.get("enchere") and fin and maintenant < fin <= avant_ts:
+                res.append(a)
+        return res
+
+    def dernier_prix(self, cle: str):
+        """(prix en ¥, moment où l'annonce a été vue pour la dernière fois) ou None."""
+        rows = self._x("SELECT prix_jpy, dernier_vu FROM vus WHERE cle = ?", (cle,))
+        return rows[0] if rows else None
+
     def alerte(self, cle: str) -> dict | None:
         rows = self._x("SELECT donnees FROM alertes WHERE cle = ?", (cle,))
         return json.loads(rows[0][0]) if rows else None

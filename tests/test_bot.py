@@ -322,3 +322,10 @@ def test_cravate_exclue():
     macadam = art("Céline Macadam vintage Boston", unique=False)
     assert not correspond(macadam, L("セリーヌ ネクタイ シルク マカダム トリオンフ ブラゾン グレー", price=7200),
                           CFG["exclusions_globales"])
+
+
+def test_lire_etat_enchere_page_yahoo():
+    html = ('var pageData = {"items":{"productID":"n1250719832","productCategoryID":"2084024215",'
+            '"price":"61000","winPrice":"0","quantity":"1","bids":"7","endtime":"2026-11-04 22:36:08"}}')
+    assert yahoo.lire_etat_enchere(html, "n1250719832") == (61000, 7)
+    assert yahoo.lire_etat_enchere(html, "x999") == (None, None)

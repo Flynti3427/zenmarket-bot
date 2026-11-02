@@ -67,6 +67,9 @@ class DiscordWebhook:
     def envoyer_alerte(self, a: dict) -> bool:
         return self._poster(payload_v2(a, est_meilleure_affaire(a, self.economie_min_pct)))
 
+    def envoyer_rappel(self, a: dict, payload: dict) -> bool:
+        return self._poster(payload)
+
     def envoyer(self, texte: str, photo: str | None = None) -> bool:
         return self._poster({"content": convertir_html(texte)[:2000], "allowed_mentions": {"parse": []}})
 
@@ -92,16 +95,23 @@ class DiscordWebhooks:
     def _webhook(self, salon: str) -> DiscordWebhook:
         return self.salons.get(salon) or self.secours
 
-    def envoyer_alerte(self, a: dict) -> bool:
-        meilleure = est_meilleure_affaire(a, self.economie_min_pct)
-        payload = payload_v2(a, meilleure)
+    def _poster_comme(self, a: dict, payload: dict) -> bool:
+        """Poste dans le salon (ou le fil) de l'article ; repli sur le salon si le fil est archivé."""
         salon = a.get("salon") or marque_de(a["article"])[1]
         ok = False
         if a.get("fil") and f"{salon}/{a['fil']}" in self.salons:
-            # fil (ex. keepall dans louis-vuitton) ; si le fil est archivé ou supprimé, repli sur le salon
             ok = self.salons[f"{salon}/{a['fil']}"]._poster(payload)
         if not ok:
             ok = self._webhook(salon)._poster(payload)
+        return ok
+
+    def envoyer_rappel(self, a: dict, payload: dict) -> bool:
+        return self._poster_comme(a, payload)
+
+    def envoyer_alerte(self, a: dict) -> bool:
+        meilleure = est_meilleure_affaire(a, self.economie_min_pct)
+        payload = payload_v2(a, meilleure)
+        ok = self._poster_comme(a, payload)
         if meilleure and "meilleures-affaires" in self.salons:
             self.salons["meilleures-affaires"]._poster(payload)
         return ok

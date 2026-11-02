@@ -170,3 +170,23 @@ class YahooSource:
         res = analyser_page(r.text, self.langue)
         log.debug("Yahoo « %s » : %d résultats", mot_cle, len(res))
         return res
+
+    def etat_enchere(self, item_id: str) -> tuple[int | None, int | None]:
+        """Prix actuel et nombre d'enchères lus sur la page de l'annonce (None si illisible)."""
+        try:
+            r = requete(self.session, "GET", f"https://auctions.yahoo.co.jp/jp/auction/{item_id}", essais=2)
+        except Exception as e:  # noqa: BLE001 — on garde alors le dernier prix vu
+            log.warning("Page Yahoo %s indisponible : %s", item_id, e)
+            return None, None
+        return lire_etat_enchere(r.text, item_id)
+
+
+def lire_etat_enchere(html: str, item_id: str) -> tuple[int | None, int | None]:
+    """Dans les données de la page (« pageData »), le bloc de l'annonce contient price et bids."""
+    i = html.find(f'"productID":"{item_id}"')
+    if i < 0:
+        return None, None
+    bloc = html[i:i + 800]
+    prix = re.search(r'"price":"?(\d+)', bloc)
+    offres = re.search(r'"bids":"?(\d+)', bloc)
+    return (int(prix.group(1)) if prix else None, int(offres.group(1)) if offres else None)

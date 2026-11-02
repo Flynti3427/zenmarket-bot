@@ -181,6 +181,44 @@ class Bot:
             envoyees += ok
         return envoyees
 
+    # ------------------------------------------------------- rappels d'enchères
+    def rappels_encheres(self) -> int:
+        """Rappel dans le salon de l'alerte quand une enchère alertée se termine bientôt."""
+        heures = self.r.get("rappel_enchere_heures", 3)
+        if not heures or not hasattr(self.notifier, "envoyer_rappel"):
+            return 0
+        from .discord_v2 import payload_rappel
+        taux = self.fx.jpy_eur()
+        envoyes = 0
+        for a in self.db.encheres_qui_finissent(time.time() + heures * 3600):
+            cle = f"rappel:{a['cle']}"
+            if self.db.meta_get(cle):
+                continue
+            # alerte envoyée alors qu'il restait déjà moins de X h : elle montre le compte à rebours, pas de rappel
+            if a["fin_ts"] - a["horodatage"] <= heures * 3600:
+                self.db.meta_set(cle, "inutile")
+                continue
+            article = next((x for x in self.articles if x.nom == a["article"]), None)
+            if self.db.est_bloque(a["cle"]) or article is None:
+                continue
+            vu = self.db.dernier_prix(a["cle"])
+            prix, vu_ts, offres = (vu[0], vu[1], None) if vu else (a["prix_jpy"], None, None)
+            source = self._source(a["source"])
+            if source is not None and hasattr(source, "etat_enchere"):
+                actuel, offres = source.etat_enchere(a["cle"].split(":", 1)[1])
+                if actuel:
+                    prix, vu_ts = actuel, time.time()
+            est = cout_rendu_france(prix, taux, self.frais, self.profils[article.profil])
+            vise = a.get("achat_vise")
+            pmax = prix_max_jpy(vise[1], taux, self.frais, self.profils[article.profil]) if vise else None
+            payload = payload_rappel(a, prix, est.prix_article_eur, est.cout_total_eur, pmax, vu_ts, offres)
+            if self.notifier.envoyer_rappel(a, payload):
+                self.db.meta_set(cle, "1")
+                envoyes += 1
+        if envoyes:
+            log.info("%d rappel(s) d'enchère envoyé(s)", envoyes)
+        return envoyes
+
     # ------------------------------------------------------------ surveillance
     def _surveiller_panne(self, source: str, total: int):
         if total > 0:
@@ -226,6 +264,7 @@ class Bot:
         """Un tour complet : recherche, alertes, récap du matin. Ne lève jamais d'exception."""
         try:
             self.cycle()
+            self.rappels_encheres()
             self.recap_quotidien()
         except Exception:  # noqa: BLE001 — le bot ne doit jamais mourir
             log.exception("Erreur inattendue pendant le cycle")
