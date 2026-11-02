@@ -1,0 +1,38 @@
+# Diagnostic temporaire : enregistre une page de recherche Yahoo pour analyse (à supprimer ensuite)
+name: Diagnostic Yahoo
+on: workflow_dispatch
+permissions:
+  contents: read
+jobs:
+  diag:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pip install -r requirements.txt
+      - name: Page de recherche + page d'une annonce
+        run: |
+          mkdir -p diag
+          python - <<'PY'
+          import json, re
+          from urllib.parse import quote
+          from bot.http import nouvelle_session, requete
+          from bot.sources.yahoo import SEARCH_URL, analyser_page
+          s = nouvelle_session()
+          r = requete(s, "GET", SEARCH_URL.format(q=quote("ルイヴィトン スピーディ"), min=10000))
+          open("diag/recherche.html", "w").write(r.text)
+          annonces = analyser_page(r.text)
+          json.dump([a.__dict__ for a in annonces[:5]], open("diag/analyse.json", "w"), ensure_ascii=False, indent=1)
+          if annonces:
+              r2 = requete(s, "GET", annonces[0].url_original)
+              open("diag/annonce.html", "w").write(r2.text)
+          print(len(annonces), "annonces")
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: diag-yahoo
+          path: diag
+          retention-days: 1
