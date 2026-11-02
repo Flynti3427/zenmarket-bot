@@ -445,3 +445,15 @@ def test_wallets_ne_bloquent_pas_les_sacs(tmp_path):
     src.tour = 1
     bot.cycle()
     assert notif.alertes[0]["article"] == "LV Speedy"          # le sac passe avant les wallets
+
+
+def test_compte_a_rebours_enchere(tmp_path):
+    from bot.discord_v2 import payload_v2
+    bot, notif, _ = _bot(tmp_path, [], DETAILS)
+    l = speedy()
+    l.source, l.is_auction, l.fin_ts = "yahoo", True, 1_794_000_000.0
+    bot.sources = [FausseSource([l])]
+    bot.cycle()
+    texte = _textes(payload_v2(notif.alertes[0])["components"][0])
+    assert "⏳ **Fin de l'enchère <t:1794000000:R>** · <t:1794000000:f>" in texte
+    assert "ne mise pas plus de" in texte

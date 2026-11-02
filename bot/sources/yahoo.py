@@ -11,6 +11,8 @@ from __future__ import annotations
 import json
 import logging
 import re
+import time
+from datetime import datetime
 from urllib.parse import quote
 
 import requests
@@ -42,14 +44,27 @@ def _liens(item_id: str, langue: str) -> tuple[str, str]:
     )
 
 
-def _listing(item_id, titre, prix, langue, image=None, achat_immediat=None, temps=None) -> Listing | None:
+def _fin(valeur) -> float | None:
+    """« 2026-11-04T22:36:08+09:00 » -> timestamp Unix (None si absent ou illisible)."""
+    if not valeur:
+        return None
+    try:
+        return datetime.fromisoformat(str(valeur)).timestamp()
+    except ValueError:
+        return None
+
+
+def _listing(item_id, titre, prix, langue, image=None, achat_immediat=None, temps=None,
+             fin_ts=None) -> Listing | None:
     if not item_id or not titre or not prix:
         return None
+    if fin_ts and fin_ts < time.time():
+        return None  # enchère déjà terminée
     orig, zen = _liens(item_id, langue)
     return Listing(
         source="yahoo", item_id=item_id, title=titre.strip(), price_jpy=prix,
         url_original=orig, url_zenmarket=zen, image_url=image,
-        is_auction=True, buy_now_jpy=achat_immediat or None, time_left=temps,
+        is_auction=True, buy_now_jpy=achat_immediat or None, time_left=temps, fin_ts=fin_ts,
     )
 
 
@@ -107,7 +122,8 @@ def _par_json(soup: BeautifulSoup, langue: str) -> list[Listing]:
         if isinstance(img, dict):
             img = img.get("url")
         l = _listing(item_id, d.get("title"), prix, langue, image=img,
-                     achat_immediat=_entier(d.get("buyNowPrice") or d.get("bidorbuy")))
+                     achat_immediat=_entier(d.get("buyNowPrice") or d.get("bidorbuy")),
+                     fin_ts=_fin(d.get("endTime") or d.get("endtime")))
         if l and item_id not in res:
             res[item_id] = l
     return list(res.values())

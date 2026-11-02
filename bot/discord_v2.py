@@ -101,14 +101,18 @@ def payload_v2(a: dict, meilleure: bool = False) -> dict:
         marge = signe(bas) if bas == haut else f"{signe(bas)} à {signe(haut)}"
         lignes.append(f"💶 Revente {fourchette(a['revente'])} → marge estimée **{marge}**")
     if a["enchere"]:
+        if a.get("fin_ts"):
+            ts = int(a["fin_ts"])
+            # compte à rebours que Discord met à jour tout seul (« dans 2 jours », « dans 3 heures »)
+            lignes.append(f"⏳ **Fin de l'enchère <t:{ts}:R>** · <t:{ts}:f>")
+        elif a.get("temps_restant"):
+            lignes.append(f"⏳ **Fin de l'enchère dans {a['temps_restant']}**")
         infos = []
         if a.get("prix_max_jpy"):
             infos.append(f"ne mise pas plus de **{jpy(a['prix_max_jpy'])}**")
-        if a.get("temps_restant"):
-            infos.append(f"fin dans {a['temps_restant']}")
         if a.get("achat_immediat_jpy"):
             infos.append(f"achat immédiat {jpy(a['achat_immediat_jpy'])}")
-        lignes.append("⏳ Enchère : " + " · ".join(infos) if infos else "⏳ Enchère : le prix peut monter")
+        lignes.append("💡 " + " · ".join(infos) if infos else "💡 Le prix peut encore monter")
     if a["source"] == "mercari_shops":
         lignes.append("ℹ️ Mercari Shops : colle le lien « Annonce d'origine » dans ZenMarket (« Ajouter une URL »).")
     blocs.append(_texte("\n".join(lignes)))

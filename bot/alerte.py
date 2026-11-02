@@ -26,6 +26,7 @@ def construire(article: Article, l: Listing, est: Estimation, etat: str, raison:
         "enchere": l.is_auction,
         "achat_immediat_jpy": l.buy_now_jpy,
         "temps_restant": l.time_left,
+        "fin_ts": l.fin_ts,
         "prix_habituel_jpy": prix_habituel_jpy,
         "prix_habituel_eur": round(prix_habituel_jpy * taux) if prix_habituel_jpy else None,
         "etat": etat,

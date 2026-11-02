@@ -24,6 +24,7 @@ class Listing:
     is_auction: bool = False
     buy_now_jpy: Optional[int] = None    # prix "achat immédiat" d'une enchère
     time_left: Optional[str] = None      # temps restant d'une enchère (texte)
+    fin_ts: Optional[float] = None       # heure de fin de l'enchère (timestamp Unix)
     seller_id: Optional[str] = None      # identifiant du vendeur (Mercari)
     photos: list = field(default_factory=list)       # jusqu'à 3 photos (détail Mercari)
     vendeur_avis: Optional[int] = None               # nombre d'évaluations du vendeur

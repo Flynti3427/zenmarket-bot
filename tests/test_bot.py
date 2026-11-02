@@ -285,3 +285,21 @@ def test_triomphe_cuir_rejette_pochette_macadam():
     titre = "オールド CELINE セリーヌ トリオンフ マカダム柄 ハンドバッグ ホーボー PVCレザー ブラウン ヴィンテージ ポーチ 6681"
     assert not correspond(triomphe, L(titre, price=36081), CFG["exclusions_globales"])
     assert correspond(triomphe, L("セリーヌ トリオンフ レザー ショルダーバッグ", price=90000), CFG["exclusions_globales"])
+
+
+def test_yahoo_heure_de_fin():
+    import json as _json
+    import time as _time
+    from datetime import datetime, timedelta, timezone
+    jst = timezone(timedelta(hours=9))
+    fin = (datetime.now(jst) + timedelta(days=2)).replace(microsecond=0)
+    passe = (datetime.now(jst) - timedelta(hours=1)).replace(microsecond=0)
+    data = {"props": {"items": [
+        {"auctionId": "n1", "title": "ルイヴィトン スピーディ25", "price": 49800, "endTime": fin.isoformat()},
+        {"auctionId": "n2", "title": "ルイヴィトン スピーディ30", "price": 39800, "endTime": passe.isoformat()},
+    ]}}
+    html = f'<script id="__NEXT_DATA__" type="application/json">{_json.dumps(data)}</script>'
+    annonces = yahoo.analyser_page(html)
+    assert [a.item_id for a in annonces] == ["n1"]           # l'enchère terminée est ignorée
+    assert annonces[0].fin_ts == fin.timestamp()
+    assert abs(annonces[0].fin_ts - _time.time() - 2 * 86400) < 5
