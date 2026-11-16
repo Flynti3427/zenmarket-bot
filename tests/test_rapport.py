@@ -57,7 +57,7 @@ def test_bouton_erreur(tmp_path):
     url = a["url_erreur"]
     assert url.startswith("https://github.com/Flynti3427/zenmarket-bot/issues/new?")
     q = parse_qs(urlparse(url).query)
-    assert q["labels"] == ["erreur"] and "mercari:m1" in q["title"][0] and "スピーディ30" in q["body"][0]
+    assert q["labels"] == ["erreur"] and "mercari:m1" in q["title"][0] and len(url) <= 512
     boutons = [c for c in payload_v2(a)["components"][0]["components"] if c["type"] == 1][0]["components"]
     assert boutons[-1]["label"] == "Erreur" and boutons[-1]["url"] == url
 
@@ -119,3 +119,11 @@ def test_tache_du_soir(tmp_path, monkeypatch):
 def test_decouper():
     morceaux = rapport.decouper("a" * 4500, 1900)
     assert [len(m) for m in morceaux] == [1900, 1900, 700]
+
+
+def test_lien_erreur_accepte_par_discord():
+    from bot.alerte import lien_signalement
+    a = {"cle": "yahoo:x1234567890", "article": "Louis Vuitton Speedy 30 Damier Ebène très long nom" * 3,
+         "titre": "ルイヴィトン " * 80, "prix_jpy": 50000, "url_original": "https://page.auctions.yahoo.co.jp/jp/auction/x1"}
+    lien = lien_signalement(a, "Flynti3427/zenmarket-bot")
+    assert len(lien) <= 512 and "labels=erreur" in lien and "x1234567890" in lien

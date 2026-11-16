@@ -66,12 +66,15 @@ def ecart_prix_habituel(a: dict) -> Optional[int]:
 
 
 def lien_signalement(a: dict, depot: str) -> str:
-    """Lien vers un signalement GitHub pré-rempli (label « erreur »), lu chaque soir par la relecture."""
-    corps = (
-        "<!-- Écris en dessous ce qui ne va pas si tu veux (facultatif), puis appuie sur « Create » -->\n\n\n"
-        f"---\nclé : `{a['cle']}`\narticle : {a['article']}\n"
-        f"titre : {a['titre'][:200]}\nprix : {a['prix_jpy']} ¥\n"
-        f"annonce : {a.get('url_original') or ''}\n"
-    )
-    titre = f"Erreur : {a['article']} ({a['cle']})"
-    return f"https://github.com/{depot}/issues/new?" + urlencode({"title": titre, "labels": "erreur", "body": corps})
+    """Lien vers un signalement GitHub pré-rempli (label « erreur »), lu chaque soir par la relecture.
+
+    Discord refuse un bouton dont le lien dépasse 512 caractères : on ne met que la clé
+    (la relecture retrouve le titre, le prix et l'annonce dans le rapport du jour).
+    """
+    base = f"https://github.com/{depot}/issues/new?"
+    article = a["article"]
+    while True:
+        lien = base + urlencode({"title": f"Erreur : {a['cle']} – {article}", "labels": "erreur"})
+        if len(lien) <= 512 or not article:
+            return lien[:512]
+        article = article[:-5]
