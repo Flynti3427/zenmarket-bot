@@ -93,6 +93,7 @@ exclusions_globales:
   - パンプス
   - ブーツ
   - 香水
+  - ウォレットチェーン  # chaîne de portefeuille seule
 
 articles:
   # =========== TABLEAU 1 : prix selon l'état (5/10 et 8/10) ===========
@@ -118,7 +119,7 @@ articles:
   - nom: LV Speedy
     recherches: [ルイヴィトン スピーディ]
     doit_contenir: [スピーディ, speedy]
-    exclure: [ナノ, ミニ, 財布, ポーチ]
+    exclure: [ナノ, ミニ, 財布, ポーチ, まとめ]   # まとめ : lots de plusieurs sacs
     prix_min_jpy: 10000
     profil: sac
     achat:   { tres_bon: [400, 450], moyen: [200, 220] }
@@ -128,6 +129,8 @@ articles:
     salon: wallet
     recherches: [ルイヴィトン 長財布, ルイヴィトン 財布]
     doit_contenir: [財布, wallet, ウォレット, ポルトフォイユ]
+    doit_contenir_aussi:
+      - [ヴィトン, vuitton]   # la marque doit être dans le titre
     exclure: [まとめ, セット]
     prix_min_jpy: 1000
     profil: petit
@@ -164,7 +167,7 @@ articles:
   - nom: LV Ellipse
     recherches: [ルイヴィトン エリプス]
     doit_contenir: [エリプス, ellipse, elipse]
-    exclure: [ポーチ, 財布]
+    exclure: [ポーチ, 財布, ベルト, サンチュール]   # ceintures « Ceinture Ellipse »
     prix_min_jpy: 8000
     profil: sac
     achat:   { tres_bon: null, moyen: 300 }   # tableau : achat 300 (5/10)
@@ -173,6 +176,8 @@ articles:
   - nom: Sac Céline (autre modèle)
     recherches: [セリーヌ バッグ]
     doit_contenir: [セリーヌ, celine, céline]
+    doit_contenir_aussi:
+      - [バッグ, バック, ショルダー, クラッチ, トート, サック, リュック, ポシェット, ボストン, bag]   # un vrai sac (pas jupe, chemisier, dustbag)
     exclure: [財布, マカダム, トリオンフ, ラゲージ, ポーチ]   # modèles suivis à part
     prix_min_jpy: 3000
     profil: sac
@@ -232,7 +237,7 @@ articles:
   - nom: Chanel Cambon vintage
     recherches: [シャネル カンボンライン]
     doit_contenir: [カンボン, cambon]
-    exclure: [財布, ポーチ]
+    exclure: [財布, ポーチ, サイフ, カードケース, シガレットケース, タバコケース]
     prix_min_jpy: 10000
     profil: sac
     achat:   { moyen: 500 }
@@ -340,7 +345,7 @@ articles:
   - nom: Lady Dior classique
     recherches: [レディディオール]
     doit_contenir: [レディディオール, レディ ディオール, lady dior]
-    exclure: [財布, ミニ, マイクロ, ポーチ]
+    exclure: [財布, ミニ, マイクロ, ポーチ, iphone, コインケース, フラグメントケース, フォンホルダー, カードホルダー]
     prix_min_jpy: 30000
     profil: sac
     achat:   { moyen: 700 }
@@ -394,7 +399,7 @@ articles:
   - nom: Bottega Veneta Cassette
     recherches: [ボッテガヴェネタ カセット]
     doit_contenir: [カセット, cassette]
-    exclure: [財布, ポーチ]
+    exclure: [財布, ポーチ, ウォレット, ジップアラウンド, カードケース, コインケース, フラグメントケース, 小銭入れ, パスケース]
     prix_min_jpy: 15000
     profil: sac
     achat:   { moyen: 350 }
@@ -412,6 +417,8 @@ articles:
   - nom: Céline Macadam vintage Boston
     recherches: [セリーヌ マカダム]
     doit_contenir: [マカダム, macadam]
+    doit_contenir_aussi:
+      - [バッグ, バック, ショルダー, クラッチ, トート, ボストン, bag]   # un vrai sac (pas vêtement, boutons de manchette, plaid…)
     exclure: [財布, ポーチ]
     prix_min_jpy: 3000
     profil: sac
@@ -469,6 +476,8 @@ articles:
     sans_limite: true
     recherches: [シャネル 財布]
     doit_contenir: [財布, ウォレット, wallet]
+    doit_contenir_aussi:
+      - [シャネル, chanel]   # la marque doit être dans le titre
     exclure: [チェーンウォレット, ウォレットオンチェーン, woc, ポーチ, キーケース, カードケース, コインケース, まとめ, セット]
     prix_min_jpy: 1000
     profil: petit
@@ -479,6 +488,8 @@ articles:
     sans_limite: true
     recherches: [ディオール 財布]
     doit_contenir: [財布, ウォレット, wallet]
+    doit_contenir_aussi:
+      - [ディオール, dior]   # la marque doit être dans le titre
     exclure: [ポーチ, キーケース, カードケース, コインケース, まとめ, セット]
     prix_min_jpy: 1000
     profil: petit
@@ -489,6 +500,8 @@ articles:
     sans_limite: true
     recherches: [グッチ 財布]
     doit_contenir: [財布, ウォレット, wallet]
+    doit_contenir_aussi:
+      - [グッチ, gucci, マーモント]   # la marque doit être dans le titre
     exclure: [ポーチ, キーケース, カードケース, コインケース, まとめ, セット]
     prix_min_jpy: 1000
     profil: petit
@@ -499,7 +512,9 @@ articles:
     sans_limite: true
     recherches: [プラダ 財布]
     doit_contenir: [財布, ウォレット, wallet]
-    exclure: [ポーチ, キーケース, カードケース, コインケース, まとめ, セット]
+    doit_contenir_aussi:
+      - [プラダ, prada]   # la marque doit être dans le titre
+    exclure: [ポーチ, キーケース, カードケース, コインケース, まとめ, セット, ミュウミュウ, miu miu, miumiu]   # Miu Miu n'est pas Prada
     prix_min_jpy: 1000
     profil: petit
     achat: {}
@@ -509,6 +524,8 @@ articles:
     sans_limite: true
     recherches: [サンローラン 財布]
     doit_contenir: [財布, ウォレット, wallet]
+    doit_contenir_aussi:
+      - [サンローラン, サン ローラン, saint laurent, saintlaurent, ysl]   # la marque doit être dans le titre
     exclure: [ポーチ, キーケース, カードケース, コインケース, まとめ, セット]
     prix_min_jpy: 1000
     profil: petit
@@ -519,6 +536,8 @@ articles:
     sans_limite: true
     recherches: [フェンディ 財布]
     doit_contenir: [財布, ウォレット, wallet]
+    doit_contenir_aussi:
+      - [フェンディ, fendi]   # la marque doit être dans le titre
     exclure: [ポーチ, キーケース, カードケース, コインケース, まとめ, セット]
     prix_min_jpy: 1000
     profil: petit
@@ -529,6 +548,8 @@ articles:
     sans_limite: true
     recherches: [ボッテガヴェネタ 財布]
     doit_contenir: [財布, ウォレット, wallet]
+    doit_contenir_aussi:
+      - [ボッテガ, bottega]   # la marque doit être dans le titre
     exclure: [ポーチ, キーケース, カードケース, コインケース, まとめ, セット]
     prix_min_jpy: 1000
     profil: petit
@@ -539,6 +560,8 @@ articles:
     sans_limite: true
     recherches: [セリーヌ 財布]
     doit_contenir: [財布, ウォレット, wallet]
+    doit_contenir_aussi:
+      - [セリーヌ, celine, céline, トリオンフ]   # la marque doit être dans le titre
     exclure: [ポーチ, キーケース, カードケース, コインケース, まとめ, セット]
     prix_min_jpy: 1000
     profil: petit
@@ -549,6 +572,8 @@ articles:
     sans_limite: true
     recherches: [クロエ 財布]
     doit_contenir: [財布, ウォレット, wallet]
+    doit_contenir_aussi:
+      - [クロエ, chloe, chloé]   # la marque doit être dans le titre
     exclure: [ポーチ, キーケース, カードケース, コインケース, まとめ, セット]
     prix_min_jpy: 1000
     profil: petit
@@ -559,6 +584,8 @@ articles:
     sans_limite: true
     recherches: [コーチ 財布]
     doit_contenir: [財布, ウォレット, wallet]
+    doit_contenir_aussi:
+      - [コーチ, coach]   # la marque doit être dans le titre
     exclure: [ポーチ, キーケース, カードケース, コインケース, まとめ, セット]
     prix_min_jpy: 1000
     profil: petit
