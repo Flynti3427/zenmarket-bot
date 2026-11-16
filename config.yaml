@@ -32,6 +32,7 @@ reglages:
   recap_quotidien_heure: 9        # heure (Europe/Paris) du récap Telegram
   sources: [mercari, yahoo]       # Mercari Japon + Yahoo Enchères (JDirectItems)
   langue_zenmarket: fr            # liens zenmarket.jp/fr/...
+  depot_github: Flynti3427/zenmarket-bot   # bouton « ❌ Erreur » et rapports du jour
 
 frais:
   taux_jpy_eur_secours: 0.0057    # utilisé si le taux du jour (BCE) est indisponible

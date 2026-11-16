@@ -92,6 +92,18 @@ class Stockage:
         rows = self._x("SELECT prix_jpy, dernier_vu FROM vus WHERE cle = ?", (cle,))
         return rows[0] if rows else None
 
+    def alertes_depuis(self, ts: float) -> list[dict]:
+        rows = self._x("SELECT donnees FROM alertes WHERE envoyee >= ? ORDER BY envoyee", (ts,))
+        return [json.loads(r[0]) for r in rows]
+
+    def compter_vues(self, article: str, depuis_ts: float) -> int:
+        return self._x("SELECT COUNT(*) FROM vus WHERE article = ? AND dernier_vu >= ?", (article, depuis_ts))[0][0]
+
+    def couts(self, article: str, depuis_ts: float) -> list[float]:
+        rows = self._x("SELECT cout_eur FROM vus WHERE article = ? AND dernier_vu >= ? AND cout_eur IS NOT NULL",
+                       (article, depuis_ts))
+        return [r[0] for r in rows]
+
     def alerte(self, cle: str) -> dict | None:
         rows = self._x("SELECT donnees FROM alertes WHERE cle = ?", (cle,))
         return json.loads(rows[0][0]) if rows else None

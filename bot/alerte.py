@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import time
+from urllib.parse import urlencode
 from typing import Optional
 
 from .filters import LIBELLES_ETAT
@@ -62,3 +63,15 @@ def ecart_prix_habituel(a: dict) -> Optional[int]:
     if not a.get("prix_habituel_jpy"):
         return None
     return round(100 * (a["prix_jpy"] - a["prix_habituel_jpy"]) / a["prix_habituel_jpy"])
+
+
+def lien_signalement(a: dict, depot: str) -> str:
+    """Lien vers un signalement GitHub pré-rempli (label « erreur »), lu chaque soir par la relecture."""
+    corps = (
+        "<!-- Écris en dessous ce qui ne va pas si tu veux (facultatif), puis appuie sur « Create » -->\n\n\n"
+        f"---\nclé : `{a['cle']}`\narticle : {a['article']}\n"
+        f"titre : {a['titre'][:200]}\nprix : {a['prix_jpy']} ¥\n"
+        f"annonce : {a.get('url_original') or ''}\n"
+    )
+    titre = f"Erreur : {a['article']} ({a['cle']})"
+    return f"https://github.com/{depot}/issues/new?" + urlencode({"title": titre, "labels": "erreur", "body": corps})

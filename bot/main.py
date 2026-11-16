@@ -19,7 +19,7 @@ from zoneinfo import ZoneInfo
 
 import yaml
 
-from .alerte import construire
+from .alerte import construire, lien_signalement
 from .controle import controler
 from .filters import correspond, estimer_etat
 from .fx import TauxChange
@@ -171,6 +171,8 @@ class Bot:
             habituel = self.db.prix_habituel_jpy(article.nom)
             alerte = construire(article, l, est, etat, raison, pmax, baisse, habituel,
                                 controler(l, habituel), taux)
+            if self.r.get("depot_github"):
+                alerte["url_erreur"] = lien_signalement(alerte, self.r["depot_github"])
             self.db.sauver_alerte(l.key, alerte)
             if hasattr(self.notifier, "envoyer_alerte"):
                 ok = self.notifier.envoyer_alerte(alerte)
@@ -280,6 +282,11 @@ class Bot:
             self.recap_quotidien()
         except Exception:  # noqa: BLE001 — le bot ne doit jamais mourir
             log.exception("Erreur inattendue pendant le cycle")
+        try:
+            from .rapport import tache_du_soir
+            tache_du_soir(self)
+        except Exception:  # noqa: BLE001
+            log.exception("Rapport / bilan du soir impossible")
         battement = Path(os.environ.get("HEARTBEAT_FILE", "data/heartbeat"))
         battement.parent.mkdir(parents=True, exist_ok=True)
         battement.write_text(str(int(time.time())))

@@ -10,6 +10,11 @@ on:
   schedule:
     - cron: "*/15 * * * *"   # GitHub peut décaler de quelques minutes aux heures chargées
   workflow_dispatch:          # bouton « Run workflow » pour lancer un tour à la main
+    inputs:
+      rapport_maintenant:
+        description: "Exporter le rapport du jour tout de suite (test)"
+        type: boolean
+        default: false
 
 concurrency:
   group: bot-zenmarket
@@ -50,6 +55,8 @@ jobs:
           DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
           DISCORD_GUILD_ID: ${{ secrets.DISCORD_GUILD_ID }}
           DISCORD_WEBHOOKS: ${{ secrets.DISCORD_WEBHOOKS }}
+          GITHUB_TOKEN: ${{ github.token }}   # rapport du jour + bilan (branche « rapports »)
+          RAPPORT_HEURE: ${{ inputs.rapport_maintenant && 'maintenant' || '19' }}
           DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: python -m bot.main --once
 

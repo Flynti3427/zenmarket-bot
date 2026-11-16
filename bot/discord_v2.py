@@ -123,6 +123,9 @@ def payload_v2(a: dict, meilleure: bool = False) -> dict:
     if a.get("url_original"):
         boutons.append({"type": 2, "style": 5, "label": "Annonce d'origine", "emoji": {"name": "🔎"},
                         "url": a["url_original"]})
+    if a.get("url_erreur"):
+        boutons.append({"type": 2, "style": 5, "label": "Erreur", "emoji": {"name": "❌"},
+                        "url": a["url_erreur"]})
     blocs.append({"type": 1, "components": boutons})
     blocs.append(_separateur())
 
