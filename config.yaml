@@ -94,6 +94,8 @@ exclusions_globales:
   - ブーツ
   - 香水
   - ウォレットチェーン  # chaîne de portefeuille seule
+  - サンダル    # sandales (« バックストラップ » passait pour un sac)
+  - ブローチ    # broche en forme de sac
 
 articles:
   # =========== TABLEAU 1 : prix selon l'état (5/10 et 8/10) ===========
@@ -131,7 +133,7 @@ articles:
     doit_contenir: [財布, wallet, ウォレット, ポルトフォイユ]
     doit_contenir_aussi:
       - [ヴィトン, vuitton]   # la marque doit être dans le titre
-    exclure: [まとめ, セット]
+    exclure: [まとめ, セット, キーケース]
     prix_min_jpy: 1000
     profil: petit
     achat:   { tres_bon: [50, 60], moyen: [40, 50] }   # 8/10 = avec boîte
@@ -178,7 +180,7 @@ articles:
     doit_contenir: [セリーヌ, celine, céline]
     doit_contenir_aussi:
       - [バッグ, バック, ショルダー, クラッチ, トート, サック, リュック, ポシェット, ボストン, bag]   # un vrai sac (pas jupe, chemisier, dustbag)
-    exclure: [財布, マカダム, トリオンフ, ラゲージ, ポーチ]   # modèles suivis à part
+    exclure: [財布, マカダム, macadam, トリオンフ, ラゲージ, ポーチ]   # modèles suivis à part
     prix_min_jpy: 3000
     profil: sac
     achat:   { tres_bon: null, moyen: 115 }
@@ -237,7 +239,7 @@ articles:
   - nom: Chanel Cambon vintage
     recherches: [シャネル カンボンライン]
     doit_contenir: [カンボン, cambon]
-    exclure: [財布, ポーチ, サイフ, カードケース, シガレットケース, タバコケース]
+    exclure: [財布, ポーチ, サイフ, カードケース, シガレットケース, タバコケース, キーケース]
     prix_min_jpy: 10000
     profil: sac
     achat:   { moyen: 500 }
@@ -300,7 +302,7 @@ articles:
   - nom: Gucci sac vintage toile GG
     recherches: [オールドグッチ GGキャンバス バッグ]
     doit_contenir: [gg]
-    exclure: [財布, ジャッキー, ディオニュソス, ポーチ]
+    exclure: [財布, ジャッキー, ディオニュソス, ポーチ, まとめ]   # まとめ : lots de sacs
     prix_min_jpy: 2000
     profil: sac
     achat:   { moyen: 100 }
@@ -345,7 +347,7 @@ articles:
   - nom: Lady Dior classique
     recherches: [レディディオール]
     doit_contenir: [レディディオール, レディ ディオール, lady dior]
-    exclure: [財布, ミニ, マイクロ, ポーチ, iphone, コインケース, フラグメントケース, フォンホルダー, カードホルダー]
+    exclure: [財布, ミニ, マイクロ, ポーチ, iphone, コインケース, フラグメントケース, フォンホルダー, カードホルダー, カードケース, キーケース, ウォレット]
     prix_min_jpy: 30000
     profil: sac
     achat:   { moyen: 700 }
@@ -399,7 +401,7 @@ articles:
   - nom: Bottega Veneta Cassette
     recherches: [ボッテガヴェネタ カセット]
     doit_contenir: [カセット, cassette]
-    exclure: [財布, ポーチ, ウォレット, ジップアラウンド, カードケース, コインケース, フラグメントケース, 小銭入れ, パスケース]
+    exclure: [財布, ポーチ, ウォレット, ジップアラウンド, カードケース, コインケース, フラグメントケース, 小銭入れ, パスケース, 二つ折り, ラウンドファスナー]
     prix_min_jpy: 15000
     profil: sac
     achat:   { moyen: 350 }
@@ -562,7 +564,7 @@ articles:
     doit_contenir: [財布, ウォレット, wallet]
     doit_contenir_aussi:
       - [セリーヌ, celine, céline, トリオンフ]   # la marque doit être dans le titre
-    exclure: [ポーチ, キーケース, カードケース, コインケース, まとめ, セット]
+    exclure: [ポーチ, キーケース, カードケース, コインケース, まとめ, セット, ベルトバッグ]
     prix_min_jpy: 1000
     profil: petit
     achat: {}

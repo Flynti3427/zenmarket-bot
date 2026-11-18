@@ -87,3 +87,38 @@ def test_relecture_rejette(article, titre):
 ])
 def test_relecture_garde(article, titre):
     assert correspond(ARTICLES[article], L(titre, price=60000), EXCL)
+
+
+# ------------------------------------------------- relecture du 18/11/2026
+@pytest.mark.parametrize("article,titre", [
+    ("Bottega Veneta Cassette", "ボッテガ BOTTEGA VENETA カセット 二つ折り"),
+    ("Bottega Veneta Cassette", "【限定品・IC】ボッテガ ヴェネタ カセット ネイビー ラウンドファスナー"),
+    ("Chanel Cambon vintage", "CHANEL シャネル カンボンライン キーケース"),
+    ("Chanel Cambon vintage", "【中古】 シャネル カンボンライン キーケース 6連キーケース ソフトカーフ  パテントレザー ブラック ピンク A26723 CHANEL Bランク"),
+    ("Lady Dior classique", "Dior レディディオール カナージュ ロータスウォレット 三つ折り ベージュ クリスチャンディオール"),
+    ("Lady Dior classique", "【美品】ディオール レディディオール カナージュ 4連キーケース 水色"),
+    ("Lady Dior classique", "ディオール レディディオール カナージュ ウルトラマット カーフスキン ブラック カードケース S0011ONMJ DIOR Aランク 中古"),
+    ("Lady Dior classique", "極美品/現行♡ディオール Lady Dior Hibiscus ウォレット 黒"),
+    ("Gucci sac vintage toile GG", "まとめ売り GUCCI オールドグッチ バッグ 14点セット GGキャンバス シェリーライン レザー ボストン ショルダー 鞄 #140※0716-39/■g.k"),
+    ("Sac Céline (autre modèle)", "CELINE セリーヌ デニム リボン バックストラップ サンダル 37.5 24.5cm程度 インディゴ レディース 古着 中古 USED"),
+    ("Sac Céline (autre modèle)", "CELINE セリーヌ バッグ型 ピンブローチ ゴールドカラー"),
+    ("Sac Céline (autre modèle)", "CELINE Macadam Monogram Clutch Bag y2k"),
+    ("LV portefeuille (wallet)", "ルイヴィトン　6連　キーケース　正規品　長財布　モノグラム　レディース　メンズ"),
+    ("Céline wallet", "【王道ブラック×艶やか金金具】セリーヌ CELINE ベルトバッグ ナノ Belt Bag Nano グレインドカーフスキン シボ革 レザー 本革 2WAY トップハンドル ハンドバッグ 財布"),
+])
+def test_relecture_18_11_rejette(article, titre):
+    assert not correspond(ARTICLES[article], L(titre), EXCL)
+
+
+@pytest.mark.parametrize("article,titre", [
+    ("Bottega Veneta Cassette", "AD4192-127182◆ほぼ未使用【ボッテガ】マキシイントレ・パデットカセット・斜め掛け・ショルダーバッグ・ICチップあり◆ラムスキン・黒"),
+    ("Chanel Cambon vintage", "CHANEL カンボンライン ショルダーバッグ"),
+    ("Lady Dior classique", "Dior ディオール レディディオール カナージュ ハンドバッグ ゴールド金具"),
+    ("Gucci sac vintage toile GG", "GUCCI オールドグッチ GGキャンバス ショルダーバッグ"),
+    ("Céline Macadam vintage Boston", "CELINE Macadam Monogram Clutch Bag y2k"),
+    ("Sac Céline (autre modèle)", "CELINE セリーヌ クラッチバッグ ブラウン"),
+    ("LV portefeuille (wallet)", "LOUIS VUITTON ルイヴィトン ヴェルニ ポルトフォイユ サラ 長財布 アマラント　箱　袋付き"),
+    ("Céline wallet", "CELINE セリーヌ ミディアム ストラップ ウォレット 財布　グレー U86"),
+])
+def test_relecture_18_11_garde(article, titre):
+    assert correspond(ARTICLES[article], L(titre, price=60000), EXCL)
