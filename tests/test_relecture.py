@@ -122,3 +122,29 @@ def test_relecture_18_11_rejette(article, titre):
 ])
 def test_relecture_18_11_garde(article, titre):
     assert correspond(ARTICLES[article], L(titre, price=60000), EXCL)
+
+
+# ------------------------------------------------- relecture du 19/11/2026
+@pytest.mark.parametrize("article,titre", [
+    ("Chanel Cambon vintage", "CHANEL シャネル ノベリティ★カンボンライン ミディアムトートバッグ ブラック"),
+    ("Céline Triomphe cuir", "CELINE　セリーヌ　スモールフラップウォレット トリオンフ　10D783BZG.04LU"),
+    ("Lady Dior classique", "クリスチャンディオール CHRISTIAN DIOR 携帯・スマホアクセサリー ブラック ゴールド レディディオール カナージュ Call'in Dior"),
+    ("LV Speedy", "LOUIS VUITTON　ルイヴィトン　ポルトクレBB　スピーディ　M66183"),
+    ("Lot portefeuilles marques", "(まとめ) 新品 ちいかわ カードウォレット コインケース 2種"),
+    ("Lot portefeuilles marques", "ちいかわ サガララゲッジタグ カードウォレット モモンガ まとめ売り"),
+    ("Céline Macadam vintage Boston", "gr様専用　CELINE セリーヌ マカダム トリオンフ ベルト ゴールドバック"),
+])
+def test_relecture_19_11_rejette(article, titre):
+    assert not correspond(ARTICLES[article], L(titre), EXCL)
+
+
+@pytest.mark.parametrize("article,titre", [
+    ("Céline Triomphe cuir", "【超美品】CELINE トリオンフチェーンショルダーバッグ"),
+    ("Lady Dior classique", "Christian Dior レディディオール マットブラック"),
+    ("LV Speedy", "LOUIS VUITTON モノグラム スピーディ35 ハンドバッグ"),
+    ("Lot portefeuilles marques", "【17点まとめ売り】ブランド財布類まとめ ヴィトン セリーヌ　サンローラン他"),
+    ("Céline Macadam vintage Boston", "CELINE セリーヌ マカダム柄 ショルダーバッグ オールドセリーヌ"),
+    ("Chanel Cambon vintage", "CHANEL カンボンライン ショルダーバッグ"),
+])
+def test_relecture_19_11_garde(article, titre):
+    assert correspond(ARTICLES[article], L(titre, price=60000), EXCL)

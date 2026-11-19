@@ -68,6 +68,7 @@ exclusions_globales:
   - リメイク
   - パーツ
   - ノベルティ
+  - ノベリティ  # autre graphie de « novelty » (cadeau promo, pas un vrai sac)
   - カタログ
   - レプリカ
   - コピー
@@ -121,7 +122,7 @@ articles:
   - nom: LV Speedy
     recherches: [ルイヴィトン スピーディ]
     doit_contenir: [スピーディ, speedy]
-    exclure: [ナノ, ミニ, 財布, ポーチ, まとめ]   # まとめ : lots de plusieurs sacs
+    exclure: [ナノ, ミニ, 財布, ポーチ, まとめ, ポルトクレ]   # まとめ : lots de plusieurs sacs ; ポルトクレ : porte-clés
     prix_min_jpy: 10000
     profil: sac
     achat:   { tres_bon: [400, 450], moyen: [200, 220] }
@@ -347,7 +348,7 @@ articles:
   - nom: Lady Dior classique
     recherches: [レディディオール]
     doit_contenir: [レディディオール, レディ ディオール, lady dior]
-    exclure: [財布, ミニ, マイクロ, ポーチ, iphone, コインケース, フラグメントケース, フォンホルダー, カードホルダー, カードケース, キーケース, ウォレット]
+    exclure: [財布, ミニ, マイクロ, ポーチ, iphone, コインケース, フラグメントケース, フォンホルダー, カードホルダー, カードケース, キーケース, ウォレット, スマホ]   # スマホ : accessoires de téléphone
     prix_min_jpy: 30000
     profil: sac
     achat:   { moyen: 700 }
@@ -421,7 +422,7 @@ articles:
     doit_contenir: [マカダム, macadam]
     doit_contenir_aussi:
       - [バッグ, バック, ショルダー, クラッチ, トート, ボストン, bag]   # un vrai sac (pas vêtement, boutons de manchette, plaid…)
-    exclure: [財布, ポーチ]
+    exclure: [財布, ポーチ, ゴールドバック]   # ゴールドバック(ル) : ceinture à boucle dorée
     prix_min_jpy: 3000
     profil: sac
     achat:   { moyen: 150 }
@@ -430,7 +431,7 @@ articles:
   - nom: Céline Triomphe cuir
     recherches: [セリーヌ トリオンフ レザー バッグ]
     doit_contenir: [トリオンフ, triomphe]
-    exclure: [キャンバス, 財布, ポーチ, マカダム, PVC]
+    exclure: [キャンバス, 財布, ポーチ, マカダム, PVC, ウォレット]   # ウォレット : wallets Triomphe
     prix_min_jpy: 30000
     profil: sac
     achat:   { moyen: 700 }
@@ -616,7 +617,7 @@ articles:
     doit_contenir: [財布, ウォレット, wallet]
     doit_contenir_aussi:
       - [まとめ, セット, 点, lot]
-    exclure: [ポーチ, ノーブランド]
+    exclure: [ポーチ, ノーブランド, ちいかわ]   # ちいかわ : goodies de personnage, pas de marque
     prix_min_jpy: 3000
     profil: lot
     achat: {}
