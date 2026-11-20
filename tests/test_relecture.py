@@ -148,3 +148,28 @@ def test_relecture_19_11_rejette(article, titre):
 ])
 def test_relecture_19_11_garde(article, titre):
     assert correspond(ARTICLES[article], L(titre, price=60000), EXCL)
+
+
+# ------------------------------------------------- relecture du 20/11/2026
+@pytest.mark.parametrize("article,titre", [
+    ("LV portefeuille (wallet)", "ルイ ヴィトン 保存袋 布袋 長財布用 LV LOUIS VUTTON"),
+    ("Chanel wallet", "【新品】 CHANEL シャネル 袋 黒 財布入れ 保管袋"),
+    ("LV Speedy", "1円～ 3ヶ月保証付き 磨き済み 美品 本物 人気 LOUIS VUITTON ルイヴィトン スピーディ デュオジェット GMT Q2371 メンズ 時計"),
+    ("Fendi Mama Baguette vintage", "FENDI フェンディ【鑑定済み】レザーベルト｜FFロゴ｜シルバーバックル｜マンマ｜本革 110/125"),
+    ("Céline Macadam vintage Boston", "CELINE セリーヌ ノエビア Cマカダム 馬車柄 トートバッグ ネイビー"),
+    ("Lot portefeuilles marques", "日本正規品 ハローキティ 50周年 財布(まとめ売り)"),
+])
+def test_relecture_20_11_rejette(article, titre):
+    assert not correspond(ARTICLES[article], L(titre), EXCL)
+
+
+@pytest.mark.parametrize("article,titre", [
+    ("LV portefeuille (wallet)", "LOUIS VUITTON ルイヴィトン ポルトフォイユ サラ モノグラム エトワール M66556 ブラウン 長財布"),
+    ("Chanel wallet", "CHANEL シャネル マトラッセ キャビアスキン ラウンドファスナー 長財布 ロングジップウォレット 保存袋付き ブラック 黒"),
+    ("LV Speedy", "★ LOUIS VUITTON モノグラム スピーディ40 M41522"),
+    ("Céline Macadam vintage Boston", "CELINE ショルダーバッグ マカダム総柄 茶 ゴールド金具 2way M03"),
+    ("Lot portefeuilles marques", "ブランド 財布 8点 まとめ売り カルティエ セリーヌ ジバンシィ サンローラン"),
+    ("LV Keepall", "LOUIS VUITTON モノグラム キーポル ボストンバッグ45"),
+])
+def test_relecture_20_11_garde(article, titre):
+    assert correspond(ARTICLES[article], L(titre, price=60000), EXCL)

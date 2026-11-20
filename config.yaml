@@ -97,6 +97,8 @@ exclusions_globales:
   - ウォレットチェーン  # chaîne de portefeuille seule
   - サンダル    # sandales (« バックストラップ » passait pour un sac)
   - ブローチ    # broche en forme de sac
+  - 財布用      # housse / dustbag « pour portefeuille » vendu seul
+  - 財布入れ    # étui / dustbag de portefeuille vendu seul
 
 articles:
   # =========== TABLEAU 1 : prix selon l'état (5/10 et 8/10) ===========
@@ -122,7 +124,7 @@ articles:
   - nom: LV Speedy
     recherches: [ルイヴィトン スピーディ]
     doit_contenir: [スピーディ, speedy]
-    exclure: [ナノ, ミニ, 財布, ポーチ, まとめ, ポルトクレ]   # まとめ : lots de plusieurs sacs ; ポルトクレ : porte-clés
+    exclure: [ナノ, ミニ, 財布, ポーチ, まとめ, ポルトクレ, 時計]   # まとめ : lots de plusieurs sacs ; ポルトクレ : porte-clés ; 時計 : montre
     prix_min_jpy: 10000
     profil: sac
     achat:   { tres_bon: [400, 450], moyen: [200, 220] }
@@ -384,7 +386,7 @@ articles:
   - nom: Fendi Mama Baguette vintage
     recherches: [フェンディ マンマバケット, フェンディ ママバケット]
     doit_contenir: [マンマ, ママ, mamma, mama]
-    exclure: [ポーチ, 財布]
+    exclure: [ポーチ, 財布, レザーベルト]   # レザーベルト : ceinture
     prix_min_jpy: 5000
     profil: sac
     achat:   { moyen: 200 }
@@ -422,7 +424,7 @@ articles:
     doit_contenir: [マカダム, macadam]
     doit_contenir_aussi:
       - [バッグ, バック, ショルダー, クラッチ, トート, ボストン, bag]   # un vrai sac (pas vêtement, boutons de manchette, plaid…)
-    exclure: [財布, ポーチ, ゴールドバック]   # ゴールドバック(ル) : ceinture à boucle dorée
+    exclure: [財布, ポーチ, ゴールドバック, ノエビア]   # ゴールドバック(ル) : ceinture à boucle dorée ; ノエビア : cadeau promo Noevir
     prix_min_jpy: 3000
     profil: sac
     achat:   { moyen: 150 }
@@ -617,7 +619,7 @@ articles:
     doit_contenir: [財布, ウォレット, wallet]
     doit_contenir_aussi:
       - [まとめ, セット, 点, lot]
-    exclure: [ポーチ, ノーブランド, ちいかわ]   # ちいかわ : goodies de personnage, pas de marque
+    exclure: [ポーチ, ノーブランド, ちいかわ, ハローキティ]   # ちいかわ, ハローキティ : goodies de personnage, pas de marque
     prix_min_jpy: 3000
     profil: lot
     achat: {}
