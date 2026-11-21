@@ -106,7 +106,7 @@ articles:
     fil: keepall          # fil « keepall » dans le salon louis-vuitton
     recherches: [ルイヴィトン キーポル]
     doit_contenir: [キーポル, keepall]
-    exclure: [ナノ, XS, ミニ, ポーチ, 財布]
+    exclure: [ナノ, XS, ミニ, ポーチ, 財布, キーポル用, キーポル付属品, ポワニエ, ハンドルホルダー]   # sangle / poignée vendues seules
     prix_min_jpy: 10000
     profil: sac
     achat:   { tres_bon: [300, 350], moyen: [220, 250] }
@@ -183,7 +183,7 @@ articles:
     doit_contenir: [セリーヌ, celine, céline]
     doit_contenir_aussi:
       - [バッグ, バック, ショルダー, クラッチ, トート, サック, リュック, ポシェット, ボストン, bag]   # un vrai sac (pas jupe, chemisier, dustbag)
-    exclure: [財布, マカダム, macadam, トリオンフ, ラゲージ, ポーチ]   # modèles suivis à part
+    exclure: [財布, マカダム, macadam, トリオンフ, ラゲージ, ポーチ, 非売品]   # modèles suivis à part ; 非売品 = objet promo
     prix_min_jpy: 3000
     profil: sac
     achat:   { tres_bon: null, moyen: 115 }
@@ -404,7 +404,7 @@ articles:
   - nom: Bottega Veneta Cassette
     recherches: [ボッテガヴェネタ カセット]
     doit_contenir: [カセット, cassette]
-    exclure: [財布, ポーチ, ウォレット, ジップアラウンド, カードケース, コインケース, フラグメントケース, 小銭入れ, パスケース, 二つ折り, ラウンドファスナー]
+    exclure: [財布, ポーチ, ウォレット, ジップアラウンド, カードケース, コインケース, フラグメントケース, 小銭入れ, パスケース, 二つ折り, ラウンドファスナー, コインパース, ベルト]   # コインパース, ベルト : porte-monnaie, ceinture
     prix_min_jpy: 15000
     profil: sac
     achat:   { moyen: 350 }
@@ -619,7 +619,7 @@ articles:
     doit_contenir: [財布, ウォレット, wallet]
     doit_contenir_aussi:
       - [まとめ, セット, 点, lot]
-    exclure: [ポーチ, ノーブランド, ちいかわ, ハローキティ]   # ちいかわ, ハローキティ : goodies de personnage, pas de marque
+    exclure: [ポーチ, ノーブランド, ちいかわ, ハローキティ, モンチッチ, イルブセット]   # goodies de personnage ; イルブセット contient « セット » sans être un lot
     prix_min_jpy: 3000
     profil: lot
     achat: {}

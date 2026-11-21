@@ -173,3 +173,28 @@ def test_relecture_20_11_rejette(article, titre):
 ])
 def test_relecture_20_11_garde(article, titre):
     assert correspond(ARTICLES[article], L(titre, price=60000), EXCL)
+
+
+# ------------------------------------------------- relecture du 21/11/2026
+@pytest.mark.parametrize("article,titre", [
+    ("LV Keepall", "LOUIS VUITTON ショルダーストラップ　110×2.5 キーポル用"),
+    ("LV Keepall", "LOUIS VUITTON ルイヴィトン ヌメ革 ハンドルホルダー ポワニエ ゴールド金具 キーポル付属品 ハンドル固定用"),
+    ("Bottega Veneta Cassette", "ボッテガヴェネタ カセット マキシイントレチャート キーリング付き コインパース"),
+    ("Bottega Veneta Cassette", "未使用に近い✨ 現行 ボッテガヴェネタ ベルト 金具 カセット 編み込み 本革"),
+    ("Sac Céline (autre modèle)", "【非売品】CELINE ナップサック ブラック"),
+    ("Lot portefeuilles marques", "Il Bussetto イルブセット L字　財布 ミニ財布 レザー ブラウン"),
+    ("Lot portefeuilles marques", "モンチッチ顔財布 まとめ売り"),
+])
+def test_relecture_21_11_rejette(article, titre):
+    assert not correspond(ARTICLES[article], L(titre), EXCL)
+
+
+@pytest.mark.parametrize("article,titre", [
+    ("LV Keepall", "Louis Vuitton モノグラム キーポル50 ボストンバッグ"),
+    ("LV Keepall", "LOUIS VUITTON　ルイヴィトン　モノグラム　キーポル45　M41428　ボストンバッグ　旅行用バッグ　旅行かばん　鑑定済　正規品　正規品"),
+    ("Bottega Veneta Cassette", "1円■ボッテガヴェネタ キャンディカセット ショルダーバッグ グリーン系 レザー BOTTEGA VENETA ■K.Cem.tI-31"),
+    ("Sac Céline (autre modèle)", "CELINE セリーヌ クラッチバッグ/セカンドバッグ ボルドー/ワインレッド系 馬車ロゴ 型押し ゴールド金具[OL03479]"),
+    ("Lot portefeuilles marques", "コーチ カルティエ 等 ブランド 財布 6点 まとめ売り 長財布 折り財布 本革"),
+])
+def test_relecture_21_11_garde(article, titre):
+    assert correspond(ARTICLES[article], L(titre, price=60000), EXCL)
