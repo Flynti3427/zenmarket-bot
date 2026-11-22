@@ -198,3 +198,35 @@ def test_relecture_21_11_rejette(article, titre):
 ])
 def test_relecture_21_11_garde(article, titre):
     assert correspond(ARTICLES[article], L(titre, price=60000), EXCL)
+
+
+# ------------------------------------------------- relecture du 22/11/2026
+@pytest.mark.parametrize("article,titre", [
+    ("LV Neverfull", "ルイヴィトン ネヴァーフルmm用 オーガナイザー LV パース オーガナイザー バッグ シェイパー インサート 海外 即決"),
+    ("LV Speedy", "ルイ・ヴィトン　ブレスレット・スピーディ"),
+    ("LV portefeuille (wallet)", "LOUIS VUITTON ルイヴィトン カードケース カード入れ パスケース 定期入れ 名刺入れ ブラウン系 ウォレット ファッション小物 普段使い 中古 DM3599"),
+    ("LV portefeuille (wallet)", "【230点以上送料込み】LOUIS VUITTON　CHANEL　HERMES　GUCCI　COACH　CELINE　GIVENCHY　FENDI　Tiffany＆Co.等　財布小物類【約29kg】"),
+    ("Prada wallet", "★PRADA★ロングウォレット用箱★カード等付属品★"),
+    ("Prada Tessuto vintage nylon", "PRADA プラダ テスートナイロン 6連 キーケース 鍵入れ メンズ レディース ブラック系 DR0782"),
+    ("Chanel Cambon vintage", "CHANEL Cambon Line　Card Case"),
+    ("Chloé Marcie petit format", "Chloe クロエ MARCIE マーシー 二つ折りスクエアウォレット グリーン"),
+    ("Chloé Paddington vintage", "Chloe パディントン コイン、カード"),
+    ("Sac Céline (autre modèle)", "CELINE セリーヌ ヴィンテージ 馬車金具 のみ ベルトバックル ベルト金具 メンズ レディース ゴールド系 DQ9154"),
+    ("Sac Céline (autre modèle)", "CELINE セリーヌ ナップサック　巾着　保存袋"),
+    ("Sac Céline (autre modèle)", "CELINE ガーメントバッグ ガーメントケース"),
+])
+def test_relecture_22_11_rejette(article, titre):
+    assert not correspond(ARTICLES[article], L(titre), EXCL)
+
+
+@pytest.mark.parametrize("article,titre", [
+    ("LV Neverfull", "LOUIS VUITTON モノグラム ネヴァーフルMM"),
+    ("LV Speedy", "ルイヴィトン M41526 スピーディ30 モノグラム"),
+    ("LV portefeuille (wallet)", "【訳あり・リペア用】ルイヴィトン エピ ジッピーウォレット 長財布 ノワール 黒"),
+    ("Gucci wallet", "GUCCI グッチ GG柄 フラップ長財布 ダークネイビー レザー 専用箱付き"),
+    ("Prada Tessuto vintage nylon", "PRADA プラダ テスート ナイロン 三角ロゴ トートバッグ ショルダーバッグ"),
+    ("Chanel Cambon vintage", "CHANEL カンボンライン トートバッグ シルバー"),
+    ("Sac Céline (autre modèle)", "CELINE ホワイト ショルダーバッグ"),
+])
+def test_relecture_22_11_garde(article, titre):
+    assert correspond(ARTICLES[article], L(titre, price=60000), EXCL)

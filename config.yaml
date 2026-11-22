@@ -99,6 +99,7 @@ exclusions_globales:
   - ブローチ    # broche en forme de sac
   - 財布用      # housse / dustbag « pour portefeuille » vendu seul
   - 財布入れ    # étui / dustbag de portefeuille vendu seul
+  - ウォレット用  # boîte / accessoire « pour portefeuille » vendu seul (ロングウォレット用箱)
 
 articles:
   # =========== TABLEAU 1 : prix selon l'état (5/10 et 8/10) ===========
@@ -115,7 +116,7 @@ articles:
   - nom: LV Neverfull
     recherches: [ルイヴィトン ネヴァーフル, ルイヴィトン ネバーフル]
     doit_contenir: [ネヴァーフル, ネバーフル, neverfull]
-    exclure: [ポーチのみ, 財布, ポーチ]
+    exclure: [ポーチのみ, 財布, ポーチ, オーガナイザー]   # オーガナイザー : insert / organiseur vendu seul
     prix_min_jpy: 10000
     profil: sac
     achat:   { tres_bon: [400, 450], moyen: [280, 320] }
@@ -124,7 +125,7 @@ articles:
   - nom: LV Speedy
     recherches: [ルイヴィトン スピーディ]
     doit_contenir: [スピーディ, speedy]
-    exclure: [ナノ, ミニ, 財布, ポーチ, まとめ, ポルトクレ, 時計]   # まとめ : lots de plusieurs sacs ; ポルトクレ : porte-clés ; 時計 : montre
+    exclure: [ナノ, ミニ, 財布, ポーチ, まとめ, ポルトクレ, 時計, ブレスレット]   # まとめ : lots de plusieurs sacs ; ポルトクレ : porte-clés ; 時計 : montre ; ブレスレット : bracelet
     prix_min_jpy: 10000
     profil: sac
     achat:   { tres_bon: [400, 450], moyen: [200, 220] }
@@ -136,7 +137,7 @@ articles:
     doit_contenir: [財布, wallet, ウォレット, ポルトフォイユ]
     doit_contenir_aussi:
       - [ヴィトン, vuitton]   # la marque doit être dans le titre
-    exclure: [まとめ, セット, キーケース]
+    exclure: [まとめ, セット, キーケース, カードケース, 点以上]   # カードケース : porte-cartes ; 点以上 : gros lots « 230点以上 »
     prix_min_jpy: 1000
     profil: petit
     achat:   { tres_bon: [50, 60], moyen: [40, 50] }   # 8/10 = avec boîte
@@ -183,7 +184,7 @@ articles:
     doit_contenir: [セリーヌ, celine, céline]
     doit_contenir_aussi:
       - [バッグ, バック, ショルダー, クラッチ, トート, サック, リュック, ポシェット, ボストン, bag]   # un vrai sac (pas jupe, chemisier, dustbag)
-    exclure: [財布, マカダム, macadam, トリオンフ, ラゲージ, ポーチ, 非売品]   # modèles suivis à part ; 非売品 = objet promo
+    exclure: [財布, マカダム, macadam, トリオンフ, ラゲージ, ポーチ, 非売品, ガーメント, ベルトバックル, 巾着 保存袋]   # modèles suivis à part ; 非売品 = objet promo ; housse à vêtements, boucle de ceinture, dustbag
     prix_min_jpy: 3000
     profil: sac
     achat:   { tres_bon: null, moyen: 115 }
@@ -242,7 +243,7 @@ articles:
   - nom: Chanel Cambon vintage
     recherches: [シャネル カンボンライン]
     doit_contenir: [カンボン, cambon]
-    exclure: [財布, ポーチ, サイフ, カードケース, シガレットケース, タバコケース, キーケース]
+    exclure: [財布, ポーチ, サイフ, カードケース, card case, シガレットケース, タバコケース, キーケース]
     prix_min_jpy: 10000
     profil: sac
     achat:   { moyen: 500 }
@@ -269,7 +270,7 @@ articles:
   - nom: Prada Tessuto vintage nylon
     recherches: [プラダ テスート ナイロン バッグ]
     doit_contenir: [テスート, tessuto, ナイロン, nylon]
-    exclure: [財布, リエディション, ポーチ]
+    exclure: [財布, リエディション, ポーチ, キーケース]   # キーケース : porte-clés
     prix_min_jpy: 3000
     profil: sac
     achat:   { moyen: 150 }
@@ -451,7 +452,7 @@ articles:
   - nom: Chloé Marcie petit format
     recherches: [クロエ マーシー]
     doit_contenir: [マーシー, marcie]
-    exclure: [財布, ポーチ]
+    exclure: [財布, ポーチ, ウォレット]   # ウォレット : portefeuille Marcie
     prix_min_jpy: 8000
     profil: sac
     achat:   { moyen: 200 }
@@ -460,7 +461,7 @@ articles:
   - nom: Chloé Paddington vintage
     recherches: [クロエ パディントン]
     doit_contenir: [パディントン, paddington]
-    exclure: [財布, ポーチ]
+    exclure: [財布, ポーチ, コイン]   # コイン : porte-monnaie / porte-cartes
     prix_min_jpy: 5000
     profil: sac
     achat:   { moyen: 150 }
