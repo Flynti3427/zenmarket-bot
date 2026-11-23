@@ -230,3 +230,24 @@ def test_relecture_22_11_rejette(article, titre):
 ])
 def test_relecture_22_11_garde(article, titre):
     assert correspond(ARTICLES[article], L(titre, price=60000), EXCL)
+
+
+# ------------------------------------------------- relecture du 23/11/2026
+@pytest.mark.parametrize("article,titre", [
+    ("Gucci Jackie vintage", "グッチ グッチシマ ニュージャッキー コンチネンタルウォレット 黒 ゴールド金具"),
+    ("Sac Céline (autre modèle)", "CELINE ショルダーストラップ ベージュ ヴィンテージ 当時物"),
+    ("Coach wallet", "COACH 財布ストラップ ブラウン　巾着袋付"),
+    ("Lot portefeuilles marques", "MONSTA X(モンスタエックス・モネク) ミニョク(MINHYUK) ネクサス アンコン ストラップ カード 財布 トレカ まとめ"),
+])
+def test_relecture_23_11_rejette(article, titre):
+    assert not correspond(ARTICLES[article], L(titre), EXCL)
+
+
+@pytest.mark.parametrize("article,titre", [
+    ("Gucci Jackie vintage", "GUCCI グッチ ジャッキー GGキャンバス ショルダーバッグ ブラック 黒"),
+    ("Sac Céline (autre modèle)", "CELINE セリーヌ ショルダーバッグ 馬車金具 クロスボディ 斜め掛け"),
+    ("Coach wallet", "COACH 長財布 ブラウン レザー ストラップ付き"),
+    ("Lot portefeuilles marques", "PRADA Dior マイケルコース 印傳屋 財布 4点 まとめ売り 訳あり"),
+])
+def test_relecture_23_11_garde(article, titre):
+    assert correspond(ARTICLES[article], L(titre, price=60000), EXCL)

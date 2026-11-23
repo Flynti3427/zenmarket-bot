@@ -184,7 +184,7 @@ articles:
     doit_contenir: [セリーヌ, celine, céline]
     doit_contenir_aussi:
       - [バッグ, バック, ショルダー, クラッチ, トート, サック, リュック, ポシェット, ボストン, bag]   # un vrai sac (pas jupe, chemisier, dustbag)
-    exclure: [財布, マカダム, macadam, トリオンフ, ラゲージ, ポーチ, 非売品, ガーメント, ベルトバックル, 巾着 保存袋]   # modèles suivis à part ; 非売品 = objet promo ; housse à vêtements, boucle de ceinture, dustbag
+    exclure: [財布, マカダム, macadam, トリオンフ, ラゲージ, ポーチ, 非売品, ガーメント, ベルトバックル, 巾着 保存袋, ショルダーストラップ]   # modèles suivis à part ; 非売品 = objet promo ; housse à vêtements, boucle de ceinture, dustbag, bandoulière seule
     prix_min_jpy: 3000
     profil: sac
     achat:   { tres_bon: null, moyen: 115 }
@@ -288,7 +288,7 @@ articles:
   - nom: Gucci Jackie vintage
     recherches: [グッチ ジャッキー]
     doit_contenir: [ジャッキー, jackie]
-    exclure: [財布, ポーチ]
+    exclure: [財布, ポーチ, ウォレット]   # ウォレット = portefeuille Jackie, pas le sac
     prix_min_jpy: 8000
     profil: sac
     achat:   { moyen: 400 }
@@ -592,7 +592,7 @@ articles:
     doit_contenir: [財布, ウォレット, wallet]
     doit_contenir_aussi:
       - [コーチ, coach]   # la marque doit être dans le titre
-    exclure: [ポーチ, キーケース, カードケース, コインケース, まとめ, セット]
+    exclure: [ポーチ, キーケース, カードケース, コインケース, まとめ, セット, 財布ストラップ]   # 財布ストラップ = dragonne seule
     prix_min_jpy: 1000
     profil: petit
     achat: {}
@@ -620,7 +620,7 @@ articles:
     doit_contenir: [財布, ウォレット, wallet]
     doit_contenir_aussi:
       - [まとめ, セット, 点, lot]
-    exclure: [ポーチ, ノーブランド, ちいかわ, ハローキティ, モンチッチ, イルブセット]   # goodies de personnage ; イルブセット contient « セット » sans être un lot
+    exclure: [ポーチ, ノーブランド, ちいかわ, ハローキティ, モンチッチ, イルブセット, トレカ]   # goodies de personnage ; トレカ = cartes à collectionner (goodies K-pop) ; イルブセット contient « セット » sans être un lot
     prix_min_jpy: 3000
     profil: lot
     achat: {}
