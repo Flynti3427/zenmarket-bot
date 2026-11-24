@@ -56,6 +56,8 @@ exclusions_globales:
   - 保存袋のみ  # dustbag seul
   - 袋のみ
   - 空箱
+  - 空き箱    # autre graphie de « boîte vide » (お財布空き箱)
+  - 財布の箱  # boîte de portefeuille vendue seule (長財布の箱)
   - ショッパー  # sac papier de boutique
   - 紙袋
   - カデナのみ  # cadenas seul
@@ -508,7 +510,7 @@ articles:
     doit_contenir: [財布, ウォレット, wallet]
     doit_contenir_aussi:
       - [グッチ, gucci, マーモント]   # la marque doit être dans le titre
-    exclure: [ポーチ, キーケース, カードケース, コインケース, まとめ, セット]
+    exclure: [ポーチ, キーケース, カードケース, コインケース, まとめ, セット, 濱野]   # 濱野 : marque Hamano (titre « グッチプラダ » pour le référencement)
     prix_min_jpy: 1000
     profil: petit
     achat: {}
@@ -520,7 +522,7 @@ articles:
     doit_contenir: [財布, ウォレット, wallet]
     doit_contenir_aussi:
       - [プラダ, prada]   # la marque doit être dans le titre
-    exclure: [ポーチ, キーケース, カードケース, コインケース, まとめ, セット, ミュウミュウ, miu miu, miumiu]   # Miu Miu n'est pas Prada
+    exclure: [ポーチ, キーケース, カードケース, コインケース, まとめ, セット, ミュウミュウ, miu miu, miumiu, 濱野]   # Miu Miu n'est pas Prada
     prix_min_jpy: 1000
     profil: petit
     achat: {}
@@ -556,7 +558,7 @@ articles:
     doit_contenir: [財布, ウォレット, wallet]
     doit_contenir_aussi:
       - [ボッテガ, bottega]   # la marque doit être dans le titre
-    exclure: [ポーチ, キーケース, カードケース, コインケース, まとめ, セット]
+    exclure: [ポーチ, キーケース, カードケース, コインケース, まとめ, セット, 風の, チャート風]   # « イントレチャート風 » : imitation du tressage, pas Bottega
     prix_min_jpy: 1000
     profil: petit
     achat: {}
@@ -568,7 +570,7 @@ articles:
     doit_contenir: [財布, ウォレット, wallet]
     doit_contenir_aussi:
       - [セリーヌ, celine, céline, トリオンフ]   # la marque doit être dans le titre
-    exclure: [ポーチ, キーケース, カードケース, コインケース, まとめ, セット, ベルトバッグ]
+    exclure: [ポーチ, キーケース, カードケース, コインケース, まとめ, セット, ベルトバッグ, クラッチバッグ]   # pochette « 長財布収納可能 », pas un portefeuille
     prix_min_jpy: 1000
     profil: petit
     achat: {}
@@ -620,7 +622,7 @@ articles:
     doit_contenir: [財布, ウォレット, wallet]
     doit_contenir_aussi:
       - [まとめ, セット, 点, lot]
-    exclure: [ポーチ, ノーブランド, ちいかわ, ハローキティ, モンチッチ, イルブセット, トレカ]   # goodies de personnage ; トレカ = cartes à collectionner (goodies K-pop) ; イルブセット contient « セット » sans être un lot
+    exclure: [ポーチ, ノーブランド, ちいかわ, ハローキティ, モンチッチ, イルブセット, トレカ, カセット]   # goodies de personnage ; トレカ = cartes à collectionner (goodies K-pop) ; イルブセット contient « セット » sans être un lot ; カセット (Bottega Cassette) contient « セット » sans être un lot
     prix_min_jpy: 3000
     profil: lot
     achat: {}

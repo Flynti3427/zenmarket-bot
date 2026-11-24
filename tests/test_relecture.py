@@ -251,3 +251,30 @@ def test_relecture_23_11_rejette(article, titre):
 ])
 def test_relecture_23_11_garde(article, titre):
     assert correspond(ARTICLES[article], L(titre, price=60000), EXCL)
+
+
+# ------------------------------------------------- relecture du 24/11/2026
+@pytest.mark.parametrize("article,titre", [
+    ("Lot portefeuilles marques", "BOTTEGA VENETA カセット 二つ折りウォレット ブラック　極美品"),
+    ("LV portefeuille (wallet)", "LOUIS VUITTON　お財布空き箱　限定品　リボン付き"),
+    ("Gucci wallet", "GUCCI 長財布の箱　付属品あり"),
+    ("Gucci wallet", "濱野⭐️長財布 レッド ゴールド金具大収納 グッチプラダ"),
+    ("Prada wallet", "濱野⭐️長財布 レッド ゴールド金具大収納 グッチプラダ"),
+    ("Bottega Veneta wallet", "BOTTEGA VENETA イントレチャート 風の長財布 ブラック"),
+    ("Céline wallet", "セリーヌ 黒マカダム クラッチバッグ セカンドバッグ 長財布収納可能 ブラック"),
+])
+def test_relecture_24_11_rejette(article, titre):
+    assert not correspond(ARTICLES[article], L(titre), EXCL)
+
+
+@pytest.mark.parametrize("article,titre", [
+    ("Lot portefeuilles marques", "FURLA フルラ など 財布 2点 セット 長財布 二つ折り ピンク レザー"),
+    ("LV portefeuille (wallet)", "LOUIS VUITTON ルイヴィトン M61734 モノグラム ポルトフォイユ サラ 二つ折り 長財布 ウォレット 小銭入れ 札入れ ブラウン系 DR1759"),
+    ("Gucci wallet", "【極美品・箱付き】GUCCI グッチ GGキャンバス 長財布 ベージュ ブラウン"),
+    ("Prada wallet", "【未使用保管品・箱付】PRADA プラダ 長財布 サフィアーノレザー ラウンドファスナー ブラック 黒 ジップアラウンド"),
+    ("Bottega Veneta wallet", "BOTTEGA VENETA イントレチャート ラウンドファスナー 長財布"),
+    ("Céline wallet", "CELINE M8 マカダム柄 がま口 長財布 ロングウォレット フラップ"),
+    ("Sac Céline (autre modèle)", "CELINE レザー クラッチバッグ ブラック"),
+])
+def test_relecture_24_11_garde(article, titre):
+    assert correspond(ARTICLES[article], L(titre, price=60000), EXCL)
