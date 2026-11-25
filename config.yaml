@@ -78,6 +78,7 @@ exclusions_globales:
   - 型紙
   - ステッカー
   - 写真のみ
+  - 確認用ページ  # page de confirmation réservée à un acheteur, pas une vraie annonce
   - ネクタイ    # cravate
   - スカーフ    # foulard
   - ハンカチ
@@ -109,7 +110,7 @@ articles:
     fil: keepall          # fil « keepall » dans le salon louis-vuitton
     recherches: [ルイヴィトン キーポル]
     doit_contenir: [キーポル, keepall]
-    exclure: [ナノ, XS, ミニ, ポーチ, 財布, キーポル用, キーポル付属品, ポワニエ, ハンドルホルダー]   # sangle / poignée vendues seules
+    exclure: [ナノ, XS, ミニ, ポーチ, 財布, キーポル用, キーポル付属品, ポワニエ, ハンドルホルダー, バンドリエール用]   # sangle / poignée vendues seules ; バンドリエール用 : bandoulière seule
     prix_min_jpy: 10000
     profil: sac
     achat:   { tres_bon: [300, 350], moyen: [220, 250] }
@@ -118,7 +119,7 @@ articles:
   - nom: LV Neverfull
     recherches: [ルイヴィトン ネヴァーフル, ルイヴィトン ネバーフル]
     doit_contenir: [ネヴァーフル, ネバーフル, neverfull]
-    exclure: [ポーチのみ, 財布, ポーチ, オーガナイザー]   # オーガナイザー : insert / organiseur vendu seul
+    exclure: [ポーチのみ, 財布, ポーチ, オーガナイザー, ショール]   # オーガナイザー : insert / organiseur vendu seul ; ショール : châle « My Neverfull »
     prix_min_jpy: 10000
     profil: sac
     achat:   { tres_bon: [400, 450], moyen: [280, 320] }
@@ -308,7 +309,7 @@ articles:
   - nom: Gucci sac vintage toile GG
     recherches: [オールドグッチ GGキャンバス バッグ]
     doit_contenir: [gg]
-    exclure: [財布, ジャッキー, ディオニュソス, ポーチ, まとめ]   # まとめ : lots de sacs
+    exclure: [財布, ジャッキー, ディオニュソス, ポーチ, まとめ, コインケース]   # まとめ : lots de sacs ; コインケース : porte-monnaie
     prix_min_jpy: 2000
     profil: sac
     achat:   { moyen: 100 }
@@ -389,7 +390,7 @@ articles:
   - nom: Fendi Mama Baguette vintage
     recherches: [フェンディ マンマバケット, フェンディ ママバケット]
     doit_contenir: [マンマ, ママ, mamma, mama]
-    exclure: [ポーチ, 財布, レザーベルト]   # レザーベルト : ceinture
+    exclure: [ポーチ, 財布, レザーベルト, バケット風]   # レザーベルト : ceinture ; バケット風 : sac « style » Mama Baguette
     prix_min_jpy: 5000
     profil: sac
     achat:   { moyen: 200 }
@@ -436,7 +437,7 @@ articles:
   - nom: Céline Triomphe cuir
     recherches: [セリーヌ トリオンフ レザー バッグ]
     doit_contenir: [トリオンフ, triomphe]
-    exclure: [キャンバス, 財布, ポーチ, マカダム, PVC, ウォレット]   # ウォレット : wallets Triomphe
+    exclure: [キャンバス, 財布, ポーチ, マカダム, PVC, ウォレット, ベルト, ブレスレット]   # ウォレット : wallets Triomphe ; ceintures et bracelets Triomphe
     prix_min_jpy: 30000
     profil: sac
     achat:   { moyen: 700 }
@@ -486,7 +487,7 @@ articles:
     doit_contenir: [財布, ウォレット, wallet]
     doit_contenir_aussi:
       - [シャネル, chanel]   # la marque doit être dans le titre
-    exclure: [チェーンウォレット, ウォレットオンチェーン, woc, ポーチ, キーケース, カードケース, コインケース, まとめ, セット]
+    exclure: [チェーンウォレット, ウォレットオンチェーン, woc, ポーチ, キーケース, カードケース, コインケース, まとめ, セット, 名刺入れ]   # 名刺入れ : porte-cartes de visite
     prix_min_jpy: 1000
     profil: petit
     achat: {}
@@ -510,7 +511,7 @@ articles:
     doit_contenir: [財布, ウォレット, wallet]
     doit_contenir_aussi:
       - [グッチ, gucci, マーモント]   # la marque doit être dans le titre
-    exclure: [ポーチ, キーケース, カードケース, コインケース, まとめ, セット, 濱野]   # 濱野 : marque Hamano (titre « グッチプラダ » pour le référencement)
+    exclure: [ポーチ, キーケース, カードケース, コインケース, まとめ, セット, 濱野, ペンケース, アートブック]   # 濱野 : marque Hamano (titre « グッチプラダ » pour le référencement) ; ペンケース : trousse ; アートブック : magazine « Wallet »
     prix_min_jpy: 1000
     profil: petit
     achat: {}
@@ -622,7 +623,7 @@ articles:
     doit_contenir: [財布, ウォレット, wallet]
     doit_contenir_aussi:
       - [まとめ, セット, 点, lot]
-    exclure: [ポーチ, ノーブランド, ちいかわ, ハローキティ, モンチッチ, イルブセット, トレカ, カセット]   # goodies de personnage ; トレカ = cartes à collectionner (goodies K-pop) ; イルブセット contient « セット » sans être un lot ; カセット (Bottega Cassette) contient « セット » sans être un lot
+    exclure: [ポーチ, ノーブランド, ちいかわ, ハローキティ, モンチッチ, イルブセット, トレカ, カセット, ペンライト]   # ペンライト : goodies d'idoles ; goodies de personnage ; トレカ = cartes à collectionner (goodies K-pop) ; イルブセット contient « セット » sans être un lot ; カセット (Bottega Cassette) contient « セット » sans être un lot
     prix_min_jpy: 3000
     profil: lot
     achat: {}

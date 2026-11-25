@@ -278,3 +278,35 @@ def test_relecture_24_11_rejette(article, titre):
 ])
 def test_relecture_24_11_garde(article, titre):
     assert correspond(ARTICLES[article], L(titre, price=60000), EXCL)
+
+
+# ------------------------------------------------- relecture du 25/11/2026
+@pytest.mark.parametrize("article,titre", [
+    ("Céline Triomphe cuir", "CELINE トリオンフ ベルト ブラック 85 定価95700円"),
+    ("Céline Triomphe cuir", "極美品✨【鑑定済み】セリーヌ｜ダブルブレスレット｜トリオンフ｜レザー｜ゴールド"),
+    ("LV Keepall", "〔COLOURS〕 未使用・長期保管・展示品■キーポルバンドリエール用■ロングストラップ＋肩当て■ヌメ革■Louis Vuitton"),
+    ("LV Neverfull", "ウール大判ショール　マイ　ネヴァーフル　ジグネチャーモチーフ"),
+    ("Gucci sac vintage toile GG", "GUCCI グッチ GGキャンバス シェリーライン コインケース 訳あり"),
+    ("Fendi Mama Baguette vintage", "A1136【希少】FENDI フェンディ ズッカ柄 ショルダーバッグ ハンドバッグ ブラウン シルバー金具 ヴィンテージ 現状品 マンマバケット風"),
+    ("Chanel wallet", "【確認用ページ】CHANEL キャビアスキン ラウンドファスナー 長財布"),
+    ("Chanel wallet", "シャネル CHANEL 名刺入れ AP0214 マトラッセ ラムスキン イエロー ゴールド金具 財布"),
+    ("Gucci wallet", "グッチ GUCCI ペンケース 662129 GGスプリーム ベージュ×ダークブラウン×ピンク デイジー/ディズニーコラボ 美品 財布"),
+    ("Gucci wallet", "Wallet #5 GUCCI アートブック　マガジン ノルウェー"),
+    ("Lot portefeuilles marques", "バッグ 財布 ペンライト 雑貨 まとめ売り"),
+])
+def test_relecture_25_11_rejette(article, titre):
+    assert not correspond(ARTICLES[article], L(titre), EXCL)
+
+
+@pytest.mark.parametrize("article,titre", [
+    ("Céline Triomphe cuir", "✨良品✨ CELINE セリーヌ トリオンフ トートバッグ レザー ブラウン"),
+    ("LV Keepall", "LOUIS VUITTON ルイヴィトン キーポル バンドリエール 50 M41416 ボストンバッグ 鑑定済み"),
+    ("LV Neverfull", "LOUIS VUITTON ルイヴィトン Neverfull ネヴァーフルMM M40156 トートバッグ 鑑定済み"),
+    ("Gucci sac vintage toile GG", "OLD GUCCI GGキャンバス 137396 シェリーライン グッチ ハンドバッグ ショルダーバッグ 100円スタート"),
+    ("Fendi Mama Baguette vintage", "1円 美品 FENDI フェンディ ズッキーノ マンマバケット ショルダーバッグ ワンショルダー ブラウン"),
+    ("Chanel wallet", "D4216◆極美品【シャネル】ロングジップウォレット 長財布 カメリア ラムスキン◆シール有 ラウンドファスナー 黒"),
+    ("Gucci wallet", "美品　GUCCI グッチDisney ディズニーミッキー 二つ折り財布"),
+    ("Lot portefeuilles marques", "COACH コーチ 財布 3点 セット 長財布 二つ折り 花柄 レザー まとめ売"),
+])
+def test_relecture_25_11_garde(article, titre):
+    assert correspond(ARTICLES[article], L(titre, price=60000), EXCL)
