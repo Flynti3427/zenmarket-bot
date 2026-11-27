@@ -110,7 +110,7 @@ articles:
     fil: keepall          # fil « keepall » dans le salon louis-vuitton
     recherches: [ルイヴィトン キーポル]
     doit_contenir: [キーポル, keepall]
-    exclure: [ナノ, XS, ミニ, ポーチ, 財布, キーポル用, キーポル付属品, ポワニエ, ハンドルホルダー, バンドリエール用]   # sangle / poignée vendues seules ; バンドリエール用 : bandoulière seule
+    exclure: [ナノ, XS, ミニ, ポーチ, 財布, キーポル用, キーポル付属品, ポワニエ, ハンドルホルダー, バンドリエール用, まとめ]   # sangle / poignée vendues seules ; バンドリエール用 : bandoulière seule ; まとめ : lots de plusieurs sacs
     prix_min_jpy: 10000
     profil: sac
     achat:   { tres_bon: [300, 350], moyen: [220, 250] }
@@ -119,7 +119,7 @@ articles:
   - nom: LV Neverfull
     recherches: [ルイヴィトン ネヴァーフル, ルイヴィトン ネバーフル]
     doit_contenir: [ネヴァーフル, ネバーフル, neverfull]
-    exclure: [ポーチのみ, 財布, ポーチ, オーガナイザー, ショール]   # オーガナイザー : insert / organiseur vendu seul ; ショール : châle « My Neverfull »
+    exclure: [ポーチのみ, 財布, ポーチ, オーガナイザー, ショール, バンドー]   # オーガナイザー : insert / organiseur vendu seul ; ショール : châle « My Neverfull » ; バンドー : bandeau « My Neverfull »
     prix_min_jpy: 10000
     profil: sac
     achat:   { tres_bon: [400, 450], moyen: [280, 320] }
@@ -167,7 +167,7 @@ articles:
   - nom: LV Alma
     recherches: [ルイヴィトン アルマ]
     doit_contenir: [アルマ, alma]
-    exclure: [財布, ポーチ]
+    exclure: [財布, ポーチ, スノードーム, 置物]   # スノードーム / 置物 : boule à neige décorative « Alma »
     prix_min_jpy: 8000
     profil: sac
     achat:   { tres_bon: [200, 250], moyen: [150, 200] }
@@ -187,7 +187,7 @@ articles:
     doit_contenir: [セリーヌ, celine, céline]
     doit_contenir_aussi:
       - [バッグ, バック, ショルダー, クラッチ, トート, サック, リュック, ポシェット, ボストン, bag]   # un vrai sac (pas jupe, chemisier, dustbag)
-    exclure: [財布, マカダム, macadam, トリオンフ, ラゲージ, ポーチ, 非売品, ガーメント, ベルトバックル, 巾着 保存袋, ショルダーストラップ]   # modèles suivis à part ; 非売品 = objet promo ; housse à vêtements, boucle de ceinture, dustbag, bandoulière seule
+    exclure: [財布, マカダム, macadam, トリオンフ, ラゲージ, ポーチ, 非売品, ガーメント, ベルトバックル, 巾着 保存袋, ショルダーストラップ, リバティ, リバーシブル ベルト]   # modèles suivis à part ; 非売品 = objet promo ; housse à vêtements, boucle de ceinture, dustbag, bandoulière seule ; リバティ : tissu Liberty « Celine » (pas la marque) ; ceinture réversible
     prix_min_jpy: 3000
     profil: sac
     achat:   { tres_bon: null, moyen: 115 }
@@ -487,7 +487,7 @@ articles:
     doit_contenir: [財布, ウォレット, wallet]
     doit_contenir_aussi:
       - [シャネル, chanel]   # la marque doit être dans le titre
-    exclure: [チェーンウォレット, ウォレットオンチェーン, woc, ポーチ, キーケース, カードケース, コインケース, まとめ, セット, 名刺入れ]   # 名刺入れ : porte-cartes de visite
+    exclure: [チェーンウォレット, ウォレットオンチェーン, woc, ポーチ, キーケース, カードケース, コインケース, まとめ, セット, 名刺入れ, フォンケース]   # 名刺入れ : porte-cartes de visite ; フォンケース : étui de téléphone à chaîne
     prix_min_jpy: 1000
     profil: petit
     achat: {}
@@ -499,7 +499,7 @@ articles:
     doit_contenir: [財布, ウォレット, wallet]
     doit_contenir_aussi:
       - [ディオール, dior]   # la marque doit être dans le titre
-    exclure: [ポーチ, キーケース, カードケース, コインケース, まとめ, セット]
+    exclure: [ポーチ, キーケース, カードケース, コインケース, まとめ, セット, 財布2点]   # 財布2点 : lot de 2 portefeuilles de marques différentes
     prix_min_jpy: 1000
     profil: petit
     achat: {}

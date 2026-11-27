@@ -310,3 +310,29 @@ def test_relecture_25_11_rejette(article, titre):
 ])
 def test_relecture_25_11_garde(article, titre):
     assert correspond(ARTICLES[article], L(titre, price=60000), EXCL)
+
+
+# ------------------------------------------------- relecture du 27/11/2026
+@pytest.mark.parametrize("article,titre", [
+    ("LV Alma", "■美品■ LOUIS VUITTON ルイヴィトン M99370 アルマ 2009年限定 スノードーム オブジェ 置物 インテリア クリア×レッド系 飾り ディスプレイ 中古 HE2452"),
+    ("LV Neverfull", "極美品 ルイヴィトン バンドーBB マイネヴァーフル M98330 箱付き"),
+    ("LV Keepall", "Louis Vuitton バッグ 4点セット ルイヴィトン クロワッサンGM ミュゼット ランドネPM キーポル45 モノグラム ブランド まとめ売り"),
+    ("Sac Céline (autre modèle)", "リバティ セリーヌ × 国産高級ボア フリルトートバッグ ベージュ｜マチ15cm"),
+    ("Sac Céline (autre modèle)", "ヴィンテージ セリーヌ 馬車金具 レザー リバーシブル ベルト 2WAY ゴールド バックル ファッション レディース EIE ET37-7【中古】"),
+    ("Chanel wallet", "CHANEL シャネル マトラッセ チェーンフォンケースウォレット ショルダーバッグ"),
+    ("Dior wallet", "Christian Dior Samantha Thavasa 財布2点"),
+])
+def test_relecture_27_11_rejette(article, titre):
+    assert not correspond(ARTICLES[article], L(titre), EXCL)
+
+
+@pytest.mark.parametrize("article,titre", [
+    ("LV Alma", "1円スタート！【美品】ルイ・ヴィトン モノグラム アルマPM M51130 カデナ(キーなし) LOUIS VUITTON ハンドバッグ"),
+    ("LV Neverfull", "加420 LOUIS VUITTON ルイ ヴィトン モノグラム ネヴァーフルMM トートバッグ ショルダートート ショルダーバッグ セミショルダー M40156"),
+    ("LV Keepall", "■大人気【LOUIS VUITTON ルイヴィトン モノグラム・キャンバス M41414 キーポル・バンドリエール 55 ショルダーストラップ付 旅行用ボスト"),
+    ("Sac Céline (autre modèle)", "CELINE セリーヌ ベルトバッグ ベージュ"),
+    ("Chanel wallet", "【箱・Gカード付】CHANEL シャネルキャビアスキン がま口 三つ折り財布 黒"),
+    ("Dior wallet", "Dior カナージュ 三つ折り財布　箱・リボン付き"),
+])
+def test_relecture_27_11_garde(article, titre):
+    assert correspond(ARTICLES[article], L(titre, price=60000), EXCL)
