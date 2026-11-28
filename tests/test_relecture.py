@@ -336,3 +336,34 @@ def test_relecture_27_11_rejette(article, titre):
 ])
 def test_relecture_27_11_garde(article, titre):
     assert correspond(ARTICLES[article], L(titre, price=60000), EXCL)
+
+
+# ------------------------------------------------- relecture du 28/11/2026
+@pytest.mark.parametrize("article,titre", [
+    ("Chanel Cambon vintage", "CHANELカンボンラインココマークBLACK＆PINK ｉPodケース"),
+    ("Céline Triomphe cuir", "【6md5363】セリーヌ コインケース トリオンフ レザー ブラック ゴールド金具【中古】レディース"),
+    ("LV Neverfull", "LOUIS VUITTON ルイ・ヴィトン Neverfull Pouch Damier Ebene 鞄 △WP3203"),
+    ("Bottega Veneta Cassette", "✨極美品　RFID搭載✨ボッテガ　三つ折り　カセット　フォンデンテ　レザー"),
+    ("Coach wallet", "COACH Black Leather ID Card Case Wallet"),
+    ("Coach wallet", "COACHスモール ジップ アラウンド カード ケース・ピロー キルティング財布"),
+    ("Céline wallet", "美品ミニカバアナイスキュイルトリオンフ CELINE ショルダーバッグセーズ財布"),
+    ("LV portefeuille (wallet)", "【正規品】ルイヴィトン　ファスナープル　ゴールド　チャック　モノグラム　財布"),
+    ("LV portefeuille (wallet)", "★ミニ財布パスケース★LOUIS VUITTON★モノグラムトランプ１枚　財布P35"),
+    ("Prada wallet", "PRADA プラダ Salvatore Ferragamo フェラガモ 財布"),
+])
+def test_relecture_28_11_rejette(article, titre):
+    assert not correspond(ARTICLES[article], L(titre), EXCL)
+
+
+@pytest.mark.parametrize("article,titre", [
+    ("Chanel Cambon vintage", "加420 CHANEL シャネル カンボンライン ラージトート ショルダーバッグ ショルダートート ココマーク ソフトカーフ ブラック A25169"),
+    ("Céline Triomphe cuir", "美品✨セリーヌ　トリオンフ　チェーンショルダー　ダークブラウン　レザー　肩掛け"),
+    ("LV Neverfull", "LOUIS VUITTON ルイヴィトン　ネヴァーフルMM　トートバッグ"),
+    ("Bottega Veneta Cassette", "BOTTEGA VENETA ボッテガヴェネタ カセット パデッド ショルダーバッグ"),
+    ("Coach wallet", "COACH Soho Leather Bifold Wallet Brown"),
+    ("Céline wallet", "CELINE セリーヌ　チェーンウォレット ショルダーバッグ"),
+    ("LV portefeuille (wallet)", "LOUIS VUITTON ルイヴィトン モノグラム 長財布 M61725"),
+    ("Prada wallet", "PRADA サフィアーノレザー ショルダーウォレット"),
+])
+def test_relecture_28_11_garde(article, titre):
+    assert correspond(ARTICLES[article], L(titre, price=60000), EXCL)

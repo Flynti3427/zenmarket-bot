@@ -119,7 +119,7 @@ articles:
   - nom: LV Neverfull
     recherches: [ルイヴィトン ネヴァーフル, ルイヴィトン ネバーフル]
     doit_contenir: [ネヴァーフル, ネバーフル, neverfull]
-    exclure: [ポーチのみ, 財布, ポーチ, オーガナイザー, ショール, バンドー]   # オーガナイザー : insert / organiseur vendu seul ; ショール : châle « My Neverfull » ; バンドー : bandeau « My Neverfull »
+    exclure: [ポーチのみ, 財布, ポーチ, オーガナイザー, ショール, バンドー, pouch]   # オーガナイザー : insert / organiseur vendu seul ; ショール : châle « My Neverfull » ; バンドー : bandeau « My Neverfull » ; pouch : pochette Neverfull seule
     prix_min_jpy: 10000
     profil: sac
     achat:   { tres_bon: [400, 450], moyen: [280, 320] }
@@ -140,7 +140,7 @@ articles:
     doit_contenir: [財布, wallet, ウォレット, ポルトフォイユ]
     doit_contenir_aussi:
       - [ヴィトン, vuitton]   # la marque doit être dans le titre
-    exclure: [まとめ, セット, キーケース, カードケース, 点以上]   # カードケース : porte-cartes ; 点以上 : gros lots « 230点以上 »
+    exclure: [まとめ, セット, キーケース, カードケース, 点以上, ファスナープル, トランプ]   # カードケース : porte-cartes ; 点以上 : gros lots « 230点以上 » ; ファスナープル : tirette seule ; トランプ : carte à jouer
     prix_min_jpy: 1000
     profil: petit
     achat:   { tres_bon: [50, 60], moyen: [40, 50] }   # 8/10 = avec boîte
@@ -246,7 +246,7 @@ articles:
   - nom: Chanel Cambon vintage
     recherches: [シャネル カンボンライン]
     doit_contenir: [カンボン, cambon]
-    exclure: [財布, ポーチ, サイフ, カードケース, card case, シガレットケース, タバコケース, キーケース]
+    exclure: [財布, ポーチ, サイフ, カードケース, card case, シガレットケース, タバコケース, キーケース, ipod]   # ipod : étui iPod Cambon
     prix_min_jpy: 10000
     profil: sac
     achat:   { moyen: 500 }
@@ -408,7 +408,7 @@ articles:
   - nom: Bottega Veneta Cassette
     recherches: [ボッテガヴェネタ カセット]
     doit_contenir: [カセット, cassette]
-    exclure: [財布, ポーチ, ウォレット, ジップアラウンド, カードケース, コインケース, フラグメントケース, 小銭入れ, パスケース, 二つ折り, ラウンドファスナー, コインパース, ベルト]   # コインパース, ベルト : porte-monnaie, ceinture
+    exclure: [財布, ポーチ, ウォレット, ジップアラウンド, カードケース, コインケース, フラグメントケース, 小銭入れ, パスケース, 二つ折り, 三つ折り, ラウンドファスナー, コインパース, ベルト]   # コインパース, ベルト : porte-monnaie, ceinture ; 三つ折り : wallet Cassette
     prix_min_jpy: 15000
     profil: sac
     achat:   { moyen: 350 }
@@ -437,7 +437,7 @@ articles:
   - nom: Céline Triomphe cuir
     recherches: [セリーヌ トリオンフ レザー バッグ]
     doit_contenir: [トリオンフ, triomphe]
-    exclure: [キャンバス, 財布, ポーチ, マカダム, PVC, ウォレット, ベルト, ブレスレット]   # ウォレット : wallets Triomphe ; ceintures et bracelets Triomphe
+    exclure: [キャンバス, 財布, ポーチ, マカダム, PVC, ウォレット, ベルト, ブレスレット, コインケース]   # ウォレット : wallets Triomphe ; ceintures et bracelets Triomphe ; コインケース : porte-monnaie
     prix_min_jpy: 30000
     profil: sac
     achat:   { moyen: 700 }
@@ -523,7 +523,7 @@ articles:
     doit_contenir: [財布, ウォレット, wallet]
     doit_contenir_aussi:
       - [プラダ, prada]   # la marque doit être dans le titre
-    exclure: [ポーチ, キーケース, カードケース, コインケース, まとめ, セット, ミュウミュウ, miu miu, miumiu, 濱野]   # Miu Miu n'est pas Prada
+    exclure: [ポーチ, キーケース, カードケース, コインケース, まとめ, セット, ミュウミュウ, miu miu, miumiu, 濱野, フェラガモ]   # Miu Miu n'est pas Prada ; フェラガモ : Ferragamo (titre « PRADA … フェラガモ »)
     prix_min_jpy: 1000
     profil: petit
     achat: {}
@@ -571,7 +571,7 @@ articles:
     doit_contenir: [財布, ウォレット, wallet]
     doit_contenir_aussi:
       - [セリーヌ, celine, céline, トリオンフ]   # la marque doit être dans le titre
-    exclure: [ポーチ, キーケース, カードケース, コインケース, まとめ, セット, ベルトバッグ, クラッチバッグ]   # pochette « 長財布収納可能 », pas un portefeuille
+    exclure: [ポーチ, キーケース, カードケース, コインケース, まとめ, セット, ベルトバッグ, クラッチバッグ, ミニカバ]   # pochette « 長財布収納可能 », pas un portefeuille ; ミニカバ : sac Mini Cabas
     prix_min_jpy: 1000
     profil: petit
     achat: {}
@@ -595,7 +595,7 @@ articles:
     doit_contenir: [財布, ウォレット, wallet]
     doit_contenir_aussi:
       - [コーチ, coach]   # la marque doit être dans le titre
-    exclure: [ポーチ, キーケース, カードケース, コインケース, まとめ, セット, 財布ストラップ]   # 財布ストラップ = dragonne seule
+    exclure: [ポーチ, キーケース, カードケース, コインケース, まとめ, セット, 財布ストラップ, card case, カード ケース]   # 財布ストラップ = dragonne seule ; card case / カード ケース : porte-cartes
     prix_min_jpy: 1000
     profil: petit
     achat: {}
